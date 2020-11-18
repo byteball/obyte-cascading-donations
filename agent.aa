@@ -1,11 +1,12 @@
 // vars:
 // var[${repo}_rules] - distribution rules of repo
-// var[${repo}_owner] - repos owner's address
 // var[${repo}_pool_${asset}] - repo's undistributed pool in asset
-// var[nickname_${address}] - donor ranking nickname
 // var[${repo}_total_received_${asset}] - total received by repo in asset
 // var[${repo1}_to_${repo2}_${asset}] - total forwarded from repo1 to repo2 in asset
 // var[paid_to_${address}_${asset}] - total paid to repo owner
+// var[${repo}_unclaimed_${asset}] - unclaimed funds of attested owner
+// var[nickname_${address}] - donor ranking nickname
+// var[nickname_owner_${nickname}] - nickanme's owner address
 
 {
 	bounce_fees: { base: 10000 },
@@ -16,14 +17,14 @@
 			typeof($attestation) == 'string' AND $attestation == $github_username
 		};
 
-		$verify_repo = ($str) => {
+		$check_repo_str = ($str) => {
 			$sp = split($str, '/');
 			if (length($sp) != 2 OR length($sp[0]) < 1 OR length($sp[1]) < 1) {
 				bounce('Invalid repo: ' || $str);
 			}
 		};
 
-		$veirfy_rules = ($rules, $own_repo) => {
+		$check_rules_and_count_total = ($rules, $own_repo) => {
 			if (typeof($rules) != 'object' OR is_array($rules)) {
 				bounce('rules is not an object');
 			}
@@ -37,9 +38,9 @@
 			}
 
 			$total = reduce($rules, 10, ($acc, $key, $value) => {
-				$verify_repo($key);
+				$check_repo_str($key);
 				if ($key == $own_repo) {
-					bounce('Invalid repo: ' || $key || ' Don\'t set own repo in rules; You will receive the unshared reminder');
+					bounce('Invalid repo: ' || $key || ' Don\'t set own repo in rules; You will receive the unshared remainder');
 				}
 
 				if (typeof($value) != 'number') {
@@ -56,26 +57,32 @@
 
 			// set rules
 			{
-				if: `{trigger.data.set_rules AND trigger.data.owner AND trigger.data.project}`,
+				if: `{trigger.data.set_rules AND trigger.data.repo}`,
 				messages: [
 					{
 						app: 'state',
 						state: `{
-							if (!$has_attestation(trigger.address, trigger.data.owner)) {
-								bounce('Address ' || trigger.address || ' has no attestation for ' || trigger.data.owner);
+							if (trigger.output[[asset=base]] < 4224) {
+								bounce('Not enough fee to pay rules storage');
 							}
 
-							$repo = trigger.data.owner || '/' || trigger.data.project;
-							$rules = exists(trigger.data.rules) ? trigger.data.rules : {};
-							$total = $veirfy_rules($rules, $repo);
+							$check_repo_str(trigger.data.repo);
+							$sp = split(trigger.data.repo, '/');
+							$owner = $sp[0];
+							$project = $sp[1];
+
+							if (!$has_attestation(trigger.address, $owner)) {
+								bounce('Address ' || trigger.address || ' has no attestation for ' || $owner);
+							}
+
+							$rules = trigger.data.rules OTHERWISE {};
+							$total = $check_rules_and_count_total($rules, trigger.data.repo);
 							if ($total > 100) {
 								bounce('Sum of rules distribution is more than 100');
 							}
 
-							var[$repo || '_rules'] = $rules;
-							var[$repo || '_owner'] = trigger.address;
-
-							response['message'] = 'Rules for ' || $repo || ' are set';
+							var[trigger.data.repo || '_rules'] = $rules;
+							response['message'] = 'Rules for ' || trigger.data.repo || ' are set';
 						}`
 					}
 				]
@@ -88,14 +95,17 @@
 					{
 						app: 'state',
 						state: `{
-							$verify_repo(trigger.data.repo);
+							$check_repo_str(trigger.data.repo);
 
 							$base_pool_var = trigger.data.repo || '_pool_base';
+							if (trigger.output[[asset=base]] < 1000) {
+								bounce('Not enough fee to pay storage');
+							}
 							$base_amount = trigger.output[[asset=base]] - 1000; // 1000 bytes storage fee
-							var[$base_pool_var] = exists(var[$base_pool_var]) ? var[$base_pool_var] + $base_amount : $base_amount;
+							var[$base_pool_var] += $base_amount;
 
 							$stat_total_base_var = trigger.data.repo || '_total_received_base';
-							var[$stat_total_base_var] = exists(var[$stat_total_base_var]) ? var[$stat_total_base_var] + $base_amount : $base_amount;
+							var[$stat_total_base_var] += $base_amount;
 							response['donated_in_base'] = $base_amount;
 
 							$asset = trigger.output[[asset!=base]].asset;
@@ -106,10 +116,10 @@
 							if ($asset != 'none') {
 								$asset_amount = trigger.output[[asset!=base]];
 								$asset_pool_var = trigger.data.repo || '_pool_' || $asset;
-								var[$asset_pool_var] = exists(var[$asset_pool_var]) ? var[$asset_pool_var] + $asset_amount : $asset_amount;
+								var[$asset_pool_var] += $asset_amount;
 
 								$stat_total_asset_var = trigger.data.repo || '_total_received_' || $asset;
-								var[$stat_total_asset_var] = exists(var[$stat_total_asset_var]) ? var[$stat_total_asset_var] + $asset_amount : $asset_amount;
+								var[$stat_total_asset_var] += $asset_amount;
 								response['donated_in_' || $asset] = $asset_amount;
 							}
 
@@ -123,14 +133,21 @@
 			{
 				if: `{trigger.data.distribute AND trigger.data.repo}`,
 				init: `{
-					$verify_repo(trigger.data.repo);
+					$check_repo_str(trigger.data.repo);
+					$sp = split(trigger.data.repo, '/');
+					$owner = $sp[0];
+					$project = $sp[1];
 					$rules_var = trigger.data.repo || '_rules';
-					$owner_var = trigger.data.repo || '_owner';
+					$claimer = $has_attestation(trigger.address, $owner) ? trigger.data.to OTHERWISE trigger.address : false;
 
 					if (exists(var[$rules_var])) {
-						$asset = exists(trigger.data.asset) ? trigger.data.asset : 'base';
+						$asset = trigger.data.asset OTHERWISE 'base';
 						$asset_pool_var = trigger.data.repo || '_pool_' || $asset;
-						if (!exists(var[$asset_pool_var]) OR var[$asset_pool_var] == 0) {
+
+						$unclaimed_var = trigger.data.repo || '_unclaimed_' || $asset;
+						$unclaimed = var[$unclaimed_var] OTHERWISE 0;
+
+						if (!var[$asset_pool_var] AND !($claimer AND $unclaimed)) {
 							bounce('Nothing to distribute in repo ' || trigger.data.repo || ' for asset ' || $asset);
 						}
 
@@ -143,13 +160,14 @@
 				}`,
 				messages: [
 					{
+						if: `{$claimer}`,
 						app: 'payment',
 						payload: {
 							asset: `{$asset}`,
 							outputs: [
 								{
-									address: `{var[$owner_var]}`,
-									amount: `{$to_self}`
+									address: `{$claimer}`,
+									amount: `{$to_self + $unclaimed}`
 								}
 							]
 						},
@@ -160,7 +178,7 @@
 							foreach(var[$rules_var], 10, ($repo, $percent) => {
 								$to_share = floor(var[$asset_pool_var] * $percent / 100);
 								$repo_pool_var = $repo || '_pool_' || $asset;
-								var[$repo_pool_var] = exists($repo_pool_var) ? var[$repo_pool_var] + $to_share : $to_share;
+								var[$repo_pool_var] += $to_share;
 
 								$stat_forwarded_var = trigger.data.repo || '_to_' || $repo || '_' || $asset;
 								var[$stat_forwarded_var] += $to_share;
@@ -169,10 +187,19 @@
 								var[$stat_total_recv_var] += $to_share;
 							});
 
-							$stat_paid_to_var = 'paid_to_' || var[$owner_var] || '_' || $asset;
-							var[$stat_paid_to_var] = exists(var[$stat_paid_to_var]) ? var[$stat_paid_to_var] + $to_self : $to_self;
+							if ($claimer) {
+								$stat_paid_to_var = 'paid_to_' || $claimer || '_' || $asset;
+								var[$stat_paid_to_var] += $to_self + $unclaimed;
+								var[$unclaimed_var] = 0;
+
+								response['claimer'] = $claimer;
+								response['claimed'] = $to_self + $unclaimed;
+							} else {
+								var[$unclaimed_var] += $to_self;
+							}
 
 							var[$asset_pool_var] = 0;
+							response['asset'] = $asset;
 							response['message'] = 'Distribution for repo ' || trigger.data.repo || ' in asset ' || $asset || ' done';
 						}`
 					}
@@ -189,7 +216,17 @@
 							if (typeof(trigger.data.nickname) != 'string') {
 								bounce('Nickname is not a string');
 							}
-							var['nickname_' || trigger.address] = trigger.data.nickname;
+
+							if (exists(var['nickname_owner_' || trigger.data.nickname])) {
+								bounce('Nickname ' || trigger.data.nickname || ' is already taken');
+							} else {
+								$old_nickname = var['nickname_' || trigger.address];
+								if ($old_nickname) {
+									var['nickname_owner_' || $old_nickname] = false;
+								}
+								var['nickname_' || trigger.address] = trigger.data.nickname;
+								var['nickname_owner_' || trigger.data.nickname] = trigger.address;
+							}
 							response['message'] = 'Nickname for ' || trigger.address || ' is now ' || trigger.data.nickname;
 						}`
 					}

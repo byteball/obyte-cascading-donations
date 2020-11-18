@@ -141,6 +141,8 @@ describe('Obyte Cascading Donations Bot Test Case 5 donations before rules are s
 		expect(vars['alice/myproject_total_received_base']).to.be.equal(10e9 + 9e3)
 		expect(vars[`alice/myproject_pool_${this.network.asset.myasset}`]).to.be.equal(1e9)
 		expect(vars[`alice/myproject_total_received_${this.network.asset.myasset}`]).to.be.equal(1e9)
+		expect(vars['alice/myproject_unclaimed_base']).to.be.undefined
+		expect(vars[`alice/myproject_unclaimed_${this.network.asset.myasset}`]).to.be.undefined
 	}).timeout(60000)
 
 	it('5.4.1 Alice sets up rules for the project', async () => {
@@ -149,8 +151,7 @@ describe('Obyte Cascading Donations Bot Test Case 5 donations before rules are s
 			amount: 1e4,
 			data: {
 				set_rules: 1,
-				owner: 'alice',
-				project: 'myproject',
+				repo: 'alice/myproject',
 				rules: {
 					'repo/1': 25
 				}
@@ -166,7 +167,6 @@ describe('Obyte Cascading Donations Bot Test Case 5 donations before rules are s
 		expect(response.response.responseVars.message).to.be.equal('Rules for alice/myproject are set')
 
 		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars['alice/myproject_owner']).to.be.equal(await this.network.wallet.alice.getAddress())
 		expect(vars['alice/myproject_rules']).to.be.deep.equal({
 			'repo/1': 25
 		})
@@ -175,6 +175,8 @@ describe('Obyte Cascading Donations Bot Test Case 5 donations before rules are s
 		expect(vars['alice/myproject_total_received_base']).to.be.equal(10e9 + 9e3)
 		expect(vars[`alice/myproject_pool_${this.network.asset.myasset}`]).to.be.equal(1e9)
 		expect(vars[`alice/myproject_total_received_${this.network.asset.myasset}`]).to.be.equal(1e9)
+		expect(vars['alice/myproject_unclaimed_base']).to.be.undefined
+		expect(vars[`alice/myproject_unclaimed_${this.network.asset.myasset}`]).to.be.undefined
 	}).timeout(60000)
 
 	it('5.5.1 Eva donates to Alice\'s project in base asset', async () => {
@@ -202,6 +204,8 @@ describe('Obyte Cascading Donations Bot Test Case 5 donations before rules are s
 		expect(vars['alice/myproject_total_received_base']).to.be.equal(11e9 + 9e3)
 		expect(vars[`alice/myproject_pool_${this.network.asset.myasset}`]).to.be.equal(1e9)
 		expect(vars[`alice/myproject_total_received_${this.network.asset.myasset}`]).to.be.equal(1e9)
+		expect(vars['alice/myproject_unclaimed_base']).to.be.undefined
+		expect(vars[`alice/myproject_unclaimed_${this.network.asset.myasset}`]).to.be.undefined
 	}).timeout(60000)
 
 	it('5.6.1 Alice triggers pool distribution(base)', async () => {
@@ -240,11 +244,14 @@ describe('Obyte Cascading Donations Bot Test Case 5 donations before rules are s
 		expect(vars['repo/1_pool_base']).to.be.equal(2750002250)
 		expect(vars['alice/myproject_to_repo/1_base']).to.be.equal(2750002250)
 
+		expect(vars['alice/myproject_unclaimed_base']).to.be.equal(0)
+		expect(vars[`alice/myproject_unclaimed_${this.network.asset.myasset}`]).to.be.undefined
+
 		await this.network.witnessUntilStable(response.response_unit)
 
 		const balanceAfterResponseStable = await this.network.wallet.alice.getBalance()
 		expect(balanceAfterResponseStable.base.pending).to.be.equal(0)
-		expect(balanceAfterResponseStable.base.stable).to.be.equal(8250975342)
+		expect(balanceAfterResponseStable.base.stable).to.be.equal(8250975349)
 	}).timeout(60000)
 
 	it('5.6.2 Alice triggers pool distribution(myasset)', async () => {
@@ -286,6 +293,9 @@ describe('Obyte Cascading Donations Bot Test Case 5 donations before rules are s
 		expect(vars[`alice/myproject_total_received_${this.network.asset.myasset}`]).to.be.equal(1e9)
 		expect(vars[`repo/1_pool_${this.network.asset.myasset}`]).to.be.equal(250000000)
 		expect(vars[`alice/myproject_to_repo/1_${this.network.asset.myasset}`]).to.be.equal(250000000)
+
+		expect(vars['alice/myproject_unclaimed_base']).to.be.equal(0)
+		expect(vars[`alice/myproject_unclaimed_${this.network.asset.myasset}`]).to.be.equal(0)
 
 		await this.network.witnessUntilStable(response.response_unit)
 

@@ -97,8 +97,7 @@ describe('Obyte Cascading Donations Bot Test Case 11 Multiple donations(custom a
 			amount: 1e4,
 			data: {
 				set_rules: 1,
-				owner: 'alice',
-				project: 'aliceproject',
+				repo: 'alice/aliceproject',
 				rules: {
 					'repo/1': 3,
 					'repo/2': 7.75,
@@ -117,7 +116,6 @@ describe('Obyte Cascading Donations Bot Test Case 11 Multiple donations(custom a
 		expect(response.response.responseVars.message).to.be.equal('Rules for alice/aliceproject are set')
 
 		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars['alice/aliceproject_owner']).to.be.equal(await this.network.wallet.alice.getAddress())
 		expect(vars['alice/aliceproject_rules']).to.be.deep.equal({
 			'repo/1': 3,
 			'repo/2': 7.75,
@@ -389,7 +387,6 @@ describe('Obyte Cascading Donations Bot Test Case 11 Multiple donations(custom a
 		const { vars } = await this.network.wallet.bob.readAAStateVars(this.network.agent.cascadingDonations)
 		const aliceAddress = await this.network.wallet.alice.getAddress()
 
-		expect(vars['alice/aliceproject_owner']).to.be.equal(aliceAddress)
 		expect(vars[`alice/aliceproject_pool_${this.network.asset.myasset}`]).to.be.equal(0)
 
 		expect(vars[`alice/aliceproject_to_repo/1_${this.network.asset.myasset}`]).to.be.equal(1.08e9)

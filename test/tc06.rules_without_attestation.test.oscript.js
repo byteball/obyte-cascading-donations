@@ -25,8 +25,7 @@ describe('Obyte Cascading Donations Bot Test Case 6 attempt to set rules without
 			amount: 1e4,
 			data: {
 				set_rules: 1,
-				owner: 'alice',
-				project: 'myproject',
+				repo: 'alice/myproject',
 				rules: {
 					'repo/1': 25
 				}
@@ -74,8 +73,7 @@ describe('Obyte Cascading Donations Bot Test Case 6 attempt to set rules without
 			amount: 1e4,
 			data: {
 				set_rules: 1,
-				owner: 'alice',
-				project: 'myproject',
+				repo: 'alice/myproject',
 				rules: {
 					'repo/1': 25
 				}
@@ -91,7 +89,6 @@ describe('Obyte Cascading Donations Bot Test Case 6 attempt to set rules without
 		expect(response.response.responseVars.message).to.be.equal('Rules for alice/myproject are set')
 
 		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars['alice/myproject_owner']).to.be.equal(await this.network.wallet.alice.getAddress())
 		expect(vars['alice/myproject_rules']).to.be.deep.equal({
 			'repo/1': 25
 		})

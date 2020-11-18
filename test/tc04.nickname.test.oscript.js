@@ -2,6 +2,8 @@
 // 1. Alice sets up a nickname
 // 2. Alice resets a nickname
 // 3. Alice fails to set invalid nickname
+// 4. Bob fails to claim already taken nickname
+// 5. Bob claims old alice's nickname
 
 const path = require('path')
 const AA_PATH = '../agent.aa'
@@ -15,6 +17,7 @@ describe('Obyte Cascading Donations Bot Test Case 4 Donor nickname set up', func
 			.with.agent({ cascadingDonations: path.join(__dirname, AA_PATH) })
 			.with.wallet({ attestor: 100e9 }, ATTESTOR_MNEMONIC)
 			.with.wallet({ alice: 100e9 })
+			.with.wallet({ bob: 100e9 })
 			.run()
 	})
 
@@ -40,6 +43,7 @@ describe('Obyte Cascading Donations Bot Test Case 4 Donor nickname set up', func
 
 		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
 		expect(vars[`nickname_${aliceAddress}`]).to.be.equal('TheDonator')
+		expect(vars.nickname_owner_TheDonator).to.be.equal(aliceAddress)
 	}).timeout(60000)
 
 	it('4.2.1 Alice resets a nickname', async () => {
@@ -64,6 +68,8 @@ describe('Obyte Cascading Donations Bot Test Case 4 Donor nickname set up', func
 
 		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
 		expect(vars[`nickname_${aliceAddress}`]).to.be.equal('AnotherNickname')
+		expect(vars.nickname_owner_AnotherNickname).to.be.equal(aliceAddress)
+		expect(vars.nickname_owner_TheDonator).to.be.undefined
 	}).timeout(60000)
 
 	it('4.3.1 Alice fails to set invalid nickname(number)', async () => {
@@ -140,6 +146,63 @@ describe('Obyte Cascading Donations Bot Test Case 4 Donor nickname set up', func
 
 		expect(response.bounced).to.be.true
 		expect(response.response.error).to.be.equal('Nickname is not a string')
+	}).timeout(60000)
+
+	it('4.4.1 Bob fails to claim already taken nickname', async () => {
+		const { unit, error } = await this.network.wallet.bob.triggerAaWithData({
+			toAddress: this.network.agent.cascadingDonations,
+			amount: 1e4,
+			data: {
+				nickname: 'AnotherNickname'
+			}
+		})
+
+		expect(unit).to.be.validUnit
+		expect(error).to.be.null
+		await this.network.witnessUntilStable(unit)
+
+		const { response } = await this.network.getAaResponseToUnit(unit)
+
+		expect(response.bounced).to.be.true
+		expect(response.response.error).to.be.equal('Nickname AnotherNickname is already taken')
+
+		const aliceAddress = await this.network.wallet.alice.getAddress()
+		const bobAddress = await this.network.wallet.bob.getAddress()
+
+		const { vars } = await this.network.wallet.bob.readAAStateVars(this.network.agent.cascadingDonations)
+		expect(vars[`nickname_${aliceAddress}`]).to.be.equal('AnotherNickname')
+		expect(vars.nickname_owner_AnotherNickname).to.be.equal(aliceAddress)
+
+		expect(vars[`nickname_${bobAddress}`]).to.be.undefined
+	}).timeout(60000)
+
+	it('4.5.1 Bob claims old alice\'s nickname', async () => {
+		const { unit, error } = await this.network.wallet.bob.triggerAaWithData({
+			toAddress: this.network.agent.cascadingDonations,
+			amount: 1e4,
+			data: {
+				nickname: 'TheDonator'
+			}
+		})
+
+		expect(unit).to.be.validUnit
+		expect(error).to.be.null
+		await this.network.witnessUntilStable(unit)
+
+		const { response } = await this.network.getAaResponseToUnit(unit)
+
+		expect(response.bounced).to.be.false
+
+		const aliceAddress = await this.network.wallet.alice.getAddress()
+		const bobAddress = await this.network.wallet.bob.getAddress()
+		expect(response.response.responseVars.message).to.be.equal(`Nickname for ${bobAddress} is now TheDonator`)
+
+		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
+		expect(vars[`nickname_${bobAddress}`]).to.be.equal('TheDonator')
+		expect(vars.nickname_owner_TheDonator).to.be.equal(bobAddress)
+
+		expect(vars[`nickname_${aliceAddress}`]).to.be.equal('AnotherNickname')
+		expect(vars.nickname_owner_AnotherNickname).to.be.equal(aliceAddress)
 	}).timeout(60000)
 
 	after(async () => {

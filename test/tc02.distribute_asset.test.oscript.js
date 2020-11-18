@@ -4,6 +4,7 @@
 // 3. Alice(the owner of the repo) calls pool distribution
 // 4. Bob donates to Alice's project in custom asset
 // 5. Bob(not the owner of the repo) calls pool distribution
+// 6. Alice claims unclaimed pool
 
 const path = require('path')
 const AA_PATH = '../agent.aa'
@@ -49,8 +50,7 @@ describe('Obyte Cascading Donations Bot Test Case 2 Distribute custom asset with
 			amount: 1e4,
 			data: {
 				set_rules: 1,
-				owner: 'alice',
-				project: 'myproject'
+				repo: 'alice/myproject'
 			}
 		})
 
@@ -64,7 +64,6 @@ describe('Obyte Cascading Donations Bot Test Case 2 Distribute custom asset with
 		expect(response.response.responseVars.message).to.be.equal('Rules for alice/myproject are set')
 
 		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars['alice/myproject_owner']).to.be.equal(await this.network.wallet.alice.getAddress())
 		expect(vars['alice/myproject_rules']).to.be.deep.equal({})
 	}).timeout(60000)
 
@@ -108,6 +107,10 @@ describe('Obyte Cascading Donations Bot Test Case 2 Distribute custom asset with
 		const { vars } = await this.network.wallet.bob.readAAStateVars(this.network.agent.cascadingDonations)
 		expect(vars[`alice/myproject_pool_${this.network.asset.myasset}`]).to.be.equal(5e8)
 		expect(vars[`alice/myproject_total_received_${this.network.asset.myasset}`]).to.be.equal(5e8)
+
+		const bobBalance = await this.network.wallet.bob.getBalance()
+		expect(bobBalance[this.network.asset.myasset].pending).to.be.equal(0)
+		expect(bobBalance[this.network.asset.myasset].stable).to.be.equal(5e8)
 	}).timeout(60000)
 
 	it('2.3.1 Alice triggers distribution', async () => {
@@ -130,14 +133,18 @@ describe('Obyte Cascading Donations Bot Test Case 2 Distribute custom asset with
 		expect(balanceAfterDistribute[this.network.asset.myasset].pending).to.be.equal(5e8)
 
 		const { response } = await this.network.getAaResponseToUnit(unit)
+		const aliceAddress = await this.network.wallet.alice.getAddress()
 
 		expect(response.bounced).to.be.false
 		expect(response.response.responseVars.message).to.be.equal(`Distribution for repo alice/myproject in asset ${this.network.asset.myasset} done`)
+		expect(response.response.responseVars.claimer).to.be.equal(aliceAddress)
+		expect(response.response.responseVars.claimed).to.be.equal(5e8)
+		expect(response.response.responseVars.asset).to.be.equal(this.network.asset.myasset)
 
 		const { vars } = await this.network.wallet.bob.readAAStateVars(this.network.agent.cascadingDonations)
 		expect(vars[`alice/myproject_pool_${this.network.asset.myasset}`]).to.be.equal(0)
-		const aliceAddress = await this.network.wallet.alice.getAddress()
 		expect(vars[`paid_to_${aliceAddress}_${this.network.asset.myasset}`]).to.be.equal(5e8)
+		expect(vars[`alice/myproject_unclaimed_${this.network.asset.myasset}`]).to.be.equal(0)
 
 		await this.network.witnessUntilStable(response.response_unit)
 
@@ -186,6 +193,10 @@ describe('Obyte Cascading Donations Bot Test Case 2 Distribute custom asset with
 		const { vars } = await this.network.wallet.bob.readAAStateVars(this.network.agent.cascadingDonations)
 		expect(vars[`alice/myproject_pool_${this.network.asset.myasset}`]).to.be.equal(5e8)
 		expect(vars[`alice/myproject_total_received_${this.network.asset.myasset}`]).to.be.equal(1e9)
+
+		const bobBalance = await this.network.wallet.bob.getBalance()
+		expect(bobBalance[this.network.asset.myasset].pending).to.be.equal(0)
+		expect(bobBalance[this.network.asset.myasset].stable).to.be.equal(0)
 	}).timeout(60000)
 
 	it('2.5.1 Bob triggers distribution', async () => {
@@ -205,17 +216,61 @@ describe('Obyte Cascading Donations Bot Test Case 2 Distribute custom asset with
 
 		const balanceAfterDistribute = await this.network.wallet.alice.getBalance()
 
-		expect(balanceAfterDistribute[this.network.asset.myasset].pending).to.be.equal(5e8)
+		expect(balanceAfterDistribute[this.network.asset.myasset].pending).to.be.equal(0)
 
 		const { response } = await this.network.getAaResponseToUnit(unit)
+		const aliceAddress = await this.network.wallet.alice.getAddress()
 
 		expect(response.bounced).to.be.false
 		expect(response.response.responseVars.message).to.be.equal(`Distribution for repo alice/myproject in asset ${this.network.asset.myasset} done`)
+		expect(response.response.responseVars.claimer).to.be.undefined
+		expect(response.response.responseVars.claimed).to.be.undefined
+		expect(response.response.responseVars.asset).to.be.equal(this.network.asset.myasset)
 
 		const { vars } = await this.network.wallet.bob.readAAStateVars(this.network.agent.cascadingDonations)
 		expect(vars[`alice/myproject_pool_${this.network.asset.myasset}`]).to.be.equal(0)
+		expect(vars[`paid_to_${aliceAddress}_${this.network.asset.myasset}`]).to.be.equal(5e8)
+		expect(vars[`alice/myproject_unclaimed_${this.network.asset.myasset}`]).to.be.equal(5e8)
+
+		await this.network.witnessUntilStable(response.response_unit)
+
+		const balanceAfterResponseStable = await this.network.wallet.alice.getBalance()
+		expect(balanceAfterResponseStable[this.network.asset.myasset].pending).to.be.equal(0)
+		expect(balanceAfterResponseStable[this.network.asset.myasset].stable).to.be.equal(5e8)
+	}).timeout(60000)
+
+	it('2.6.1 Alice claims unclaimed pool', async () => {
+		const { unit, error } = await this.network.wallet.alice.triggerAaWithData({
+			toAddress: this.network.agent.cascadingDonations,
+			amount: 1e4,
+			data: {
+				distribute: 1,
+				repo: 'alice/myproject',
+				asset: this.network.asset.myasset
+			}
+		})
+
+		expect(unit).to.be.validUnit
+		expect(error).to.be.null
+		await this.network.witnessUntilStable(unit)
+
+		const balanceAfterDistribute = await this.network.wallet.alice.getBalance()
+
+		expect(balanceAfterDistribute[this.network.asset.myasset].pending).to.be.equal(5e8)
+
+		const { response } = await this.network.getAaResponseToUnit(unit)
 		const aliceAddress = await this.network.wallet.alice.getAddress()
+
+		expect(response.bounced).to.be.false
+		expect(response.response.responseVars.message).to.be.equal(`Distribution for repo alice/myproject in asset ${this.network.asset.myasset} done`)
+		expect(response.response.responseVars.claimer).to.be.equal(aliceAddress)
+		expect(response.response.responseVars.claimed).to.be.equal(5e8)
+		expect(response.response.responseVars.asset).to.be.equal(this.network.asset.myasset)
+
+		const { vars } = await this.network.wallet.bob.readAAStateVars(this.network.agent.cascadingDonations)
+		expect(vars[`alice/myproject_pool_${this.network.asset.myasset}`]).to.be.equal(0)
 		expect(vars[`paid_to_${aliceAddress}_${this.network.asset.myasset}`]).to.be.equal(1e9)
+		expect(vars[`alice/myproject_unclaimed_${this.network.asset.myasset}`]).to.be.equal(0)
 
 		await this.network.witnessUntilStable(response.response_unit)
 

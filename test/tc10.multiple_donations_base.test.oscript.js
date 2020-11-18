@@ -79,8 +79,7 @@ describe('Obyte Cascading Donations Bot Test Case 10 Multiple donations(base)', 
 			amount: 1e4,
 			data: {
 				set_rules: 1,
-				owner: 'alice',
-				project: 'aliceproject',
+				repo: 'alice/aliceproject',
 				rules: {
 					'repo/1': 5,
 					'repo/2': 12.5,
@@ -99,7 +98,6 @@ describe('Obyte Cascading Donations Bot Test Case 10 Multiple donations(base)', 
 		expect(response.response.responseVars.message).to.be.equal('Rules for alice/aliceproject are set')
 
 		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars['alice/aliceproject_owner']).to.be.equal(await this.network.wallet.alice.getAddress())
 		expect(vars['alice/aliceproject_rules']).to.be.deep.equal({
 			'repo/1': 5,
 			'repo/2': 12.5,
@@ -276,14 +274,13 @@ describe('Obyte Cascading Donations Bot Test Case 10 Multiple donations(base)', 
 		const balance = await this.network.wallet.alice.getBalance()
 
 		expect(balance.base.pending).to.be.equal(0)
-		expect(balance.base.stable).to.be.equal(17820958112)
+		expect(balance.base.stable).to.be.equal(17820958119)
 	}).timeout(60000)
 
 	it('10.12.1 Check aliceproject state vars', async () => {
 		const { vars } = await this.network.wallet.bob.readAAStateVars(this.network.agent.cascadingDonations)
 		const aliceAddress = await this.network.wallet.alice.getAddress()
 
-		expect(vars['alice/aliceproject_owner']).to.be.equal(aliceAddress)
 		expect(vars['alice/aliceproject_pool_base']).to.be.equal(0)
 
 		expect(vars['alice/aliceproject_to_repo/1_base']).to.be.equal(1800000000)

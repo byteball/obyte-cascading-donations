@@ -95,8 +95,7 @@ describe('Obyte Cascading Donations Bot Test Case 7 Nested donations 1 level(bas
 			amount: 1e4,
 			data: {
 				set_rules: 1,
-				owner: 'alice',
-				project: 'aliceproject',
+				repo: 'alice/aliceproject',
 				rules: {
 					'bob/bobproject': 30,
 					'eva/evaproject': 20
@@ -119,8 +118,7 @@ describe('Obyte Cascading Donations Bot Test Case 7 Nested donations 1 level(bas
 			amount: 1e4,
 			data: {
 				set_rules: 1,
-				owner: 'bob',
-				project: 'bobproject'
+				repo: 'bob/bobproject'
 			}
 		})
 
@@ -156,6 +154,7 @@ describe('Obyte Cascading Donations Bot Test Case 7 Nested donations 1 level(bas
 		const { vars } = await this.network.wallet.bob.readAAStateVars(this.network.agent.cascadingDonations)
 		expect(vars['alice/aliceproject_pool_base']).to.be.equal(100e9)
 		expect(vars['alice/aliceproject_total_received_base']).to.be.equal(100e9)
+		expect(vars['alice/aliceproject_unclaimed_base']).to.be.undefined
 	}).timeout(60000)
 
 	it('7.4.1 Trigger distribution for aliceproject(base)', async () => {
@@ -196,11 +195,15 @@ describe('Obyte Cascading Donations Bot Test Case 7 Nested donations 1 level(bas
 		expect(vars['eva/evaproject_total_received_base']).to.be.equal(20e9)
 		expect(vars['alice/aliceproject_to_eva/evaproject_base']).to.be.equal(20e9)
 
+		expect(vars['alice/aliceproject_unclaimed_base']).to.be.equal(0)
+		expect(vars['bob/bobproject_unclaimed_base']).to.be.undefined
+		expect(vars['eva/evaproject_unclaimed_base']).to.be.undefined
+
 		await this.network.witnessUntilStable(response.response_unit)
 
 		const balanceAfterResponseStable = await this.network.wallet.alice.getBalance()
 		expect(balanceAfterResponseStable.base.pending).to.be.equal(0)
-		expect(balanceAfterResponseStable.base.stable).to.be.equal(50e9 + 978996)
+		expect(balanceAfterResponseStable.base.stable).to.be.equal(50e9 + 979003)
 	}).timeout(60000)
 
 	it('7.5.1 Trigger distribution for bobproject(base)', async () => {
@@ -244,11 +247,15 @@ describe('Obyte Cascading Donations Bot Test Case 7 Nested donations 1 level(bas
 		expect(vars['eva/evaproject_total_received_base']).to.be.equal(20e9)
 		expect(vars['alice/aliceproject_to_eva/evaproject_base']).to.be.equal(20e9)
 
+		expect(vars['alice/aliceproject_unclaimed_base']).to.be.equal(0)
+		expect(vars['bob/bobproject_unclaimed_base']).to.be.equal(0)
+		expect(vars['eva/evaproject_unclaimed_base']).to.be.undefined
+
 		await this.network.witnessUntilStable(response.response_unit)
 
 		const balanceAfterResponseStable = await this.network.wallet.bob.getBalance()
 		expect(balanceAfterResponseStable.base.pending).to.be.equal(0)
-		expect(balanceAfterResponseStable.base.stable).to.be.equal(30e9 + 979053)
+		expect(balanceAfterResponseStable.base.stable).to.be.equal(30e9 + 979060)
 	}).timeout(60000)
 
 	it('7.6.1 Set up rules for evaproject', async () => {
@@ -257,8 +264,7 @@ describe('Obyte Cascading Donations Bot Test Case 7 Nested donations 1 level(bas
 			amount: 1e4,
 			data: {
 				set_rules: 1,
-				owner: 'eva',
-				project: 'evaproject'
+				repo: 'eva/evaproject'
 			}
 		})
 
@@ -314,11 +320,15 @@ describe('Obyte Cascading Donations Bot Test Case 7 Nested donations 1 level(bas
 		expect(vars['eva/evaproject_total_received_base']).to.be.equal(20e9)
 		expect(vars['alice/aliceproject_to_eva/evaproject_base']).to.be.equal(20e9)
 
+		expect(vars['alice/aliceproject_unclaimed_base']).to.be.equal(0)
+		expect(vars['bob/bobproject_unclaimed_base']).to.be.equal(0)
+		expect(vars['eva/evaproject_unclaimed_base']).to.be.equal(0)
+
 		await this.network.witnessUntilStable(response.response_unit)
 
 		const balanceAfterResponseStable = await this.network.wallet.eva.getBalance()
 		expect(balanceAfterResponseStable.base.pending).to.be.equal(0)
-		expect(balanceAfterResponseStable.base.stable).to.be.equal(20e9 + 979053)
+		expect(balanceAfterResponseStable.base.stable).to.be.equal(20e9 + 979060)
 	}).timeout(60000)
 
 	after(async () => {

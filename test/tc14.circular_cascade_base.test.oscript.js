@@ -100,8 +100,7 @@ describe('Obyte Cascading Donations Bot Test Case 14 Circular cascade', function
 			amount: 1e4,
 			data: {
 				set_rules: 1,
-				owner: 'alice',
-				project: 'aliceproject',
+				repo: 'alice/aliceproject',
 				rules: {
 					'bob/bobproject': 50
 				}
@@ -118,7 +117,6 @@ describe('Obyte Cascading Donations Bot Test Case 14 Circular cascade', function
 		expect(response.response.responseVars.message).to.be.equal('Rules for alice/aliceproject are set')
 
 		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars['alice/aliceproject_owner']).to.be.equal(await this.network.wallet.alice.getAddress())
 		expect(vars['alice/aliceproject_rules']).to.be.deep.equal({
 			'bob/bobproject': 50
 		})
@@ -130,8 +128,7 @@ describe('Obyte Cascading Donations Bot Test Case 14 Circular cascade', function
 			amount: 1e4,
 			data: {
 				set_rules: 1,
-				owner: 'bob',
-				project: 'bobproject',
+				repo: 'bob/bobproject',
 				rules: {
 					'eva/evaproject': 50
 				}
@@ -148,7 +145,6 @@ describe('Obyte Cascading Donations Bot Test Case 14 Circular cascade', function
 		expect(response.response.responseVars.message).to.be.equal('Rules for bob/bobproject are set')
 
 		const { vars } = await this.network.wallet.bob.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars['bob/bobproject_owner']).to.be.equal(await this.network.wallet.bob.getAddress())
 		expect(vars['bob/bobproject_rules']).to.be.deep.equal({
 			'eva/evaproject': 50
 		})
@@ -160,8 +156,7 @@ describe('Obyte Cascading Donations Bot Test Case 14 Circular cascade', function
 			amount: 1e4,
 			data: {
 				set_rules: 1,
-				owner: 'eva',
-				project: 'evaproject',
+				repo: 'eva/evaproject',
 				rules: {
 					'alice/aliceproject': 50
 				}
@@ -178,7 +173,6 @@ describe('Obyte Cascading Donations Bot Test Case 14 Circular cascade', function
 		expect(response.response.responseVars.message).to.be.equal('Rules for eva/evaproject are set')
 
 		const { vars } = await this.network.wallet.eva.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars['eva/evaproject_owner']).to.be.equal(await this.network.wallet.eva.getAddress())
 		expect(vars['eva/evaproject_rules']).to.be.deep.equal({
 			'alice/aliceproject': 50
 		})
@@ -223,6 +217,11 @@ describe('Obyte Cascading Donations Bot Test Case 14 Circular cascade', function
 
 		expect(response.bounced).to.be.false
 		expect(response.response.responseVars.message).to.be.equal('Distribution for repo alice/aliceproject in asset base done')
+
+		const aliceAddress = await this.network.wallet.alice.getAddress()
+		expect(response.response.responseVars.claimer).to.be.equal(aliceAddress)
+		expect(response.response.responseVars.claimed).to.be.equal(50e9)
+		expect(response.response.responseVars.asset).to.be.equal('base')
 	}).timeout(60000)
 
 	it('14.4.1 Trigger bobproject distribution', async () => {
@@ -243,6 +242,11 @@ describe('Obyte Cascading Donations Bot Test Case 14 Circular cascade', function
 
 		expect(response.bounced).to.be.false
 		expect(response.response.responseVars.message).to.be.equal('Distribution for repo bob/bobproject in asset base done')
+
+		const bobAddress = await this.network.wallet.bob.getAddress()
+		expect(response.response.responseVars.claimer).to.be.equal(bobAddress)
+		expect(response.response.responseVars.claimed).to.be.equal(25e9)
+		expect(response.response.responseVars.asset).to.be.equal('base')
 	}).timeout(60000)
 
 	it('14.5.1 Trigger evaproject distribution', async () => {
@@ -263,27 +267,32 @@ describe('Obyte Cascading Donations Bot Test Case 14 Circular cascade', function
 
 		expect(response.bounced).to.be.false
 		expect(response.response.responseVars.message).to.be.equal('Distribution for repo eva/evaproject in asset base done')
+
+		const evaAddress = await this.network.wallet.eva.getAddress()
+		expect(response.response.responseVars.claimer).to.be.equal(evaAddress)
+		expect(response.response.responseVars.claimed).to.be.equal(12.5e9)
+		expect(response.response.responseVars.asset).to.be.equal('base')
 	}).timeout(60000)
 
 	it('14.6.1 Check Alice balances', async () => {
 		const balance = await this.network.wallet.alice.getBalance()
 
 		expect(balance.base.pending).to.be.equal(0)
-		expect(balance.base.stable).to.be.equal(50e9 + 979018)
+		expect(balance.base.stable).to.be.equal(50e9 + 979025)
 	}).timeout(60000)
 
 	it('14.6.2 Check Bob balances', async () => {
 		const balance = await this.network.wallet.bob.getBalance()
 
 		expect(balance.base.pending).to.be.equal(0)
-		expect(balance.base.stable).to.be.equal(25e9 + 979026)
+		expect(balance.base.stable).to.be.equal(25e9 + 979033)
 	}).timeout(60000)
 
 	it('14.6.3 Check Eva balances', async () => {
 		const balance = await this.network.wallet.eva.getBalance()
 
 		expect(balance.base.pending).to.be.equal(0)
-		expect(balance.base.stable).to.be.equal(12.5e9 + 979022)
+		expect(balance.base.stable).to.be.equal(12.5e9 + 979029)
 	}).timeout(60000)
 
 	it('14.7.1 Check projects\' state vars', async () => {
@@ -292,13 +301,8 @@ describe('Obyte Cascading Donations Bot Test Case 14 Circular cascade', function
 		const bobAddress = await this.network.wallet.bob.getAddress()
 		const evaAddress = await this.network.wallet.eva.getAddress()
 
-		expect(vars['alice/aliceproject_owner']).to.be.equal(aliceAddress)
 		expect(vars['alice/aliceproject_pool_base']).to.be.equal(12.5e9)
-
-		expect(vars['bob/bobproject_owner']).to.be.equal(bobAddress)
 		expect(vars['bob/bobproject_pool_base']).to.be.equal(0)
-
-		expect(vars['eva/evaproject_owner']).to.be.equal(evaAddress)
 		expect(vars['eva/evaproject_pool_base']).to.be.equal(0)
 
 		expect(vars['alice/aliceproject_to_bob/bobproject_base']).to.be.equal(50e9)
@@ -312,6 +316,10 @@ describe('Obyte Cascading Donations Bot Test Case 14 Circular cascade', function
 		expect(vars[`paid_to_${aliceAddress}_base`]).to.be.equal(50e9)
 		expect(vars[`paid_to_${bobAddress}_base`]).to.be.equal(25e9)
 		expect(vars[`paid_to_${evaAddress}_base`]).to.be.equal(12.5e9)
+
+		expect(vars['alice/aliceproject_unclaimed_base']).to.be.equal(0)
+		expect(vars['bob/bobproject_unclaimed_base']).to.be.equal(0)
+		expect(vars['eva/evaproject_unclaimed_base']).to.be.equal(0)
 	}).timeout(60000)
 
 	it('14.8.1 Trigger aliceproject distribution 2', async () => {
@@ -332,6 +340,11 @@ describe('Obyte Cascading Donations Bot Test Case 14 Circular cascade', function
 
 		expect(response.bounced).to.be.false
 		expect(response.response.responseVars.message).to.be.equal('Distribution for repo alice/aliceproject in asset base done')
+
+		const aliceAddress = await this.network.wallet.alice.getAddress()
+		expect(response.response.responseVars.claimer).to.be.equal(aliceAddress)
+		expect(response.response.responseVars.claimed).to.be.equal(6.25e9)
+		expect(response.response.responseVars.asset).to.be.equal('base')
 	}).timeout(60000)
 
 	it('14.9.1 Trigger bobproject distribution 2', async () => {
@@ -352,6 +365,11 @@ describe('Obyte Cascading Donations Bot Test Case 14 Circular cascade', function
 
 		expect(response.bounced).to.be.false
 		expect(response.response.responseVars.message).to.be.equal('Distribution for repo bob/bobproject in asset base done')
+
+		const bobAddress = await this.network.wallet.bob.getAddress()
+		expect(response.response.responseVars.claimer).to.be.equal(bobAddress)
+		expect(response.response.responseVars.claimed).to.be.equal(3.125e9)
+		expect(response.response.responseVars.asset).to.be.equal('base')
 	}).timeout(60000)
 
 	it('14.10.1 Trigger evaproject distribution 2', async () => {
@@ -372,27 +390,32 @@ describe('Obyte Cascading Donations Bot Test Case 14 Circular cascade', function
 
 		expect(response.bounced).to.be.false
 		expect(response.response.responseVars.message).to.be.equal('Distribution for repo eva/evaproject in asset base done')
+
+		const evaAddress = await this.network.wallet.eva.getAddress()
+		expect(response.response.responseVars.claimer).to.be.equal(evaAddress)
+		expect(response.response.responseVars.claimed).to.be.equal(1.5625e9)
+		expect(response.response.responseVars.asset).to.be.equal('base')
 	}).timeout(60000)
 
 	it('14.11.1 Check Alice balances 2', async () => {
 		const balance = await this.network.wallet.alice.getBalance()
 
 		expect(balance.base.pending).to.be.equal(0)
-		expect(balance.base.stable).to.be.equal(56.25e9 + 968575)
+		expect(balance.base.stable).to.be.equal(56.25e9 + 968582)
 	}).timeout(60000)
 
 	it('14.11.2 Check Bob balances 2', async () => {
 		const balance = await this.network.wallet.bob.getBalance()
 
 		expect(balance.base.pending).to.be.equal(0)
-		expect(balance.base.stable).to.be.equal(28.125e9 + 968587)
+		expect(balance.base.stable).to.be.equal(28.125e9 + 968594)
 	}).timeout(60000)
 
 	it('14.11.3 Check Eva balances 2', async () => {
 		const balance = await this.network.wallet.eva.getBalance()
 
 		expect(balance.base.pending).to.be.equal(0)
-		expect(balance.base.stable).to.be.equal(14.0625e9 + 968583)
+		expect(balance.base.stable).to.be.equal(14.0625e9 + 968590)
 	}).timeout(60000)
 
 	it('14.12.1 Check projects\' state vars 2', async () => {
@@ -401,13 +424,8 @@ describe('Obyte Cascading Donations Bot Test Case 14 Circular cascade', function
 		const bobAddress = await this.network.wallet.bob.getAddress()
 		const evaAddress = await this.network.wallet.eva.getAddress()
 
-		expect(vars['alice/aliceproject_owner']).to.be.equal(aliceAddress)
 		expect(vars['alice/aliceproject_pool_base']).to.be.equal(1.5625e9)
-
-		expect(vars['bob/bobproject_owner']).to.be.equal(bobAddress)
 		expect(vars['bob/bobproject_pool_base']).to.be.equal(0)
-
-		expect(vars['eva/evaproject_owner']).to.be.equal(evaAddress)
 		expect(vars['eva/evaproject_pool_base']).to.be.equal(0)
 
 		expect(vars['alice/aliceproject_to_bob/bobproject_base']).to.be.equal(56.25e9)
@@ -421,6 +439,10 @@ describe('Obyte Cascading Donations Bot Test Case 14 Circular cascade', function
 		expect(vars[`paid_to_${aliceAddress}_base`]).to.be.equal(56.25e9)
 		expect(vars[`paid_to_${bobAddress}_base`]).to.be.equal(28.125e9)
 		expect(vars[`paid_to_${evaAddress}_base`]).to.be.equal(14.0625e9)
+
+		expect(vars['alice/aliceproject_unclaimed_base']).to.be.equal(0)
+		expect(vars['bob/bobproject_unclaimed_base']).to.be.equal(0)
+		expect(vars['eva/evaproject_unclaimed_base']).to.be.equal(0)
 	}).timeout(60000)
 
 	after(async () => {

@@ -10,8 +10,7 @@ Set donation distribution rules on repo
 
 ```javascript
 trigger.data.set_rules - set this to 1
-trigger.data.owner - attested github user for trigger.address
-trigger.data.project - name of the project
+trigger.data.repo - repository to set rules on. First part ot the repo(the owner) must be the attested github user for trigger.address
 trigger.data.rules - object with distribution rules. Omit this param to receive 100% of donations
 
 {
@@ -20,7 +19,7 @@ trigger.data.rules - object with distribution rules. Omit this param to receive 
 	...
 }
 
-Maximum number of nested repos is 10. Reminder of undistributed funds will be send to the owner.
+Maximum number of nested repos is 10. Remainder of undistributed funds will be send to the owner.
 ```
 
 ### Donate
@@ -34,17 +33,18 @@ trigger.data.repo - repository to send donation to. Example: `owner/repo`
 
 ### Distribute
 
-Distribute undistributed pool of a repository.
+Distribute undistributed pool of a repository. If `trigger.address` is the attested owner of the repo, the owner will receive his payment. Otherwise, it will be stored in unclaimed pool.
 
 ```javascript
 trigger.data.distribute - set this to 1
 trigger.data.repo - repository to trigger pool distribution on
 trigger.data.asset - specifies asset to distribute. Default is `base`
+trigger.data.to - optional address. The attested owner can specify the addres that will receive payment instead of him.
 ```
 
 ### Set nickname
 
-Associate donator nickname with trigger.address
+Associate donator nickname with trigger.address. Previous nickname(if present) will be freed.
 
 ```javascript
 trigger.data.nickname - nickname string
@@ -54,10 +54,11 @@ trigger.data.nickname - nickname string
 
 ```javascript
 var[${repo}_rules] - distribution rules of repo
-var[${repo}_owner] - repos owner's address
 var[${repo}_pool_${asset}] - repo's undistributed pool in asset
-var[nickname_${address}] - donor ranking nickname
 var[${repo}_total_received_${asset}] - total received by repo in asset
 var[${repo1}_to_${repo2}_${asset}] - total forwarded from repo1 to repo2 in asset
 var[paid_to_${address}_${asset}] - total paid to repo owner
+var[${repo}_unclaimed_${asset}] - unclaimed funds of attested owner
+var[nickname_${address}] - donor ranking nickname
+var[nickname_owner_${nickname}] - nickanme's owner address
 ```

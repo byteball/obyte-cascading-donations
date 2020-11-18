@@ -72,8 +72,7 @@ describe('Obyte Cascading Donations Bot Test Case 9 many assets', function () {
 			amount: 1e4,
 			data: {
 				set_rules: 1,
-				owner: 'alice',
-				project: 'aliceproject',
+				repo: 'alice/aliceproject',
 				rules: {
 					'bob/bobproject': 5,
 					'eva/evaproject': 10,
@@ -564,6 +563,8 @@ describe('Obyte Cascading Donations Bot Test Case 9 many assets', function () {
 		expect(vars[`charlie/charlieproject_total_received_${this.network.asset.myasset1}`]).to.be.equal(15e9)
 		expect(vars[`alice/aliceproject_to_charlie/charlieproject_${this.network.asset.myasset1}`]).to.be.equal(15e9)
 
+		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset1}`]).to.be.equal(0)
+
 		await this.network.witnessUntilStable(response.response_unit)
 
 		const balanceAfterResponseStable = await this.network.wallet.alice.getBalance()
@@ -613,6 +614,9 @@ describe('Obyte Cascading Donations Bot Test Case 9 many assets', function () {
 		expect(vars[`charlie/charlieproject_pool_${this.network.asset.myasset2}`]).to.be.equal(15e9)
 		expect(vars[`charlie/charlieproject_total_received_${this.network.asset.myasset2}`]).to.be.equal(15e9)
 		expect(vars[`alice/aliceproject_to_charlie/charlieproject_${this.network.asset.myasset2}`]).to.be.equal(15e9)
+
+		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset1}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset2}`]).to.be.equal(0)
 
 		await this.network.witnessUntilStable(response.response_unit)
 
@@ -664,6 +668,10 @@ describe('Obyte Cascading Donations Bot Test Case 9 many assets', function () {
 		expect(vars[`charlie/charlieproject_total_received_${this.network.asset.myasset3}`]).to.be.equal(15e9)
 		expect(vars[`alice/aliceproject_to_charlie/charlieproject_${this.network.asset.myasset3}`]).to.be.equal(15e9)
 
+		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset1}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset2}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset3}`]).to.be.equal(0)
+
 		await this.network.witnessUntilStable(response.response_unit)
 
 		const balanceAfterResponseStable = await this.network.wallet.alice.getBalance()
@@ -713,6 +721,11 @@ describe('Obyte Cascading Donations Bot Test Case 9 many assets', function () {
 		expect(vars[`charlie/charlieproject_pool_${this.network.asset.myasset4}`]).to.be.equal(15e9)
 		expect(vars[`charlie/charlieproject_total_received_${this.network.asset.myasset4}`]).to.be.equal(15e9)
 		expect(vars[`alice/aliceproject_to_charlie/charlieproject_${this.network.asset.myasset4}`]).to.be.equal(15e9)
+
+		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset1}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset2}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset3}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset4}`]).to.be.equal(0)
 
 		await this.network.witnessUntilStable(response.response_unit)
 
@@ -764,6 +777,12 @@ describe('Obyte Cascading Donations Bot Test Case 9 many assets', function () {
 		expect(vars[`charlie/charlieproject_total_received_${this.network.asset.myasset5}`]).to.be.equal(15e9)
 		expect(vars[`alice/aliceproject_to_charlie/charlieproject_${this.network.asset.myasset5}`]).to.be.equal(15e9)
 
+		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset1}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset2}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset3}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset4}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset5}`]).to.be.equal(0)
+
 		await this.network.witnessUntilStable(response.response_unit)
 
 		const balanceAfterResponseStable = await this.network.wallet.alice.getBalance()
@@ -813,6 +832,13 @@ describe('Obyte Cascading Donations Bot Test Case 9 many assets', function () {
 		expect(vars[`charlie/charlieproject_pool_${this.network.asset.myasset6}`]).to.be.equal(15e9)
 		expect(vars[`charlie/charlieproject_total_received_${this.network.asset.myasset6}`]).to.be.equal(15e9)
 		expect(vars[`alice/aliceproject_to_charlie/charlieproject_${this.network.asset.myasset6}`]).to.be.equal(15e9)
+
+		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset1}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset2}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset3}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset4}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset5}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset6}`]).to.be.equal(0)
 
 		await this.network.witnessUntilStable(response.response_unit)
 
@@ -864,6 +890,14 @@ describe('Obyte Cascading Donations Bot Test Case 9 many assets', function () {
 		expect(vars[`charlie/charlieproject_total_received_${this.network.asset.myasset7}`]).to.be.equal(15e9)
 		expect(vars[`alice/aliceproject_to_charlie/charlieproject_${this.network.asset.myasset7}`]).to.be.equal(15e9)
 
+		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset1}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset2}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset3}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset4}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset5}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset6}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset7}`]).to.be.equal(0)
+
 		await this.network.witnessUntilStable(response.response_unit)
 
 		const balanceAfterResponseStable = await this.network.wallet.alice.getBalance()
@@ -913,6 +947,15 @@ describe('Obyte Cascading Donations Bot Test Case 9 many assets', function () {
 		expect(vars[`charlie/charlieproject_pool_${this.network.asset.myasset8}`]).to.be.equal(15e9)
 		expect(vars[`charlie/charlieproject_total_received_${this.network.asset.myasset8}`]).to.be.equal(15e9)
 		expect(vars[`alice/aliceproject_to_charlie/charlieproject_${this.network.asset.myasset8}`]).to.be.equal(15e9)
+
+		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset1}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset2}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset3}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset4}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset5}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset6}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset7}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset8}`]).to.be.equal(0)
 
 		await this.network.witnessUntilStable(response.response_unit)
 
@@ -964,6 +1007,16 @@ describe('Obyte Cascading Donations Bot Test Case 9 many assets', function () {
 		expect(vars[`charlie/charlieproject_total_received_${this.network.asset.myasset9}`]).to.be.equal(15e9)
 		expect(vars[`alice/aliceproject_to_charlie/charlieproject_${this.network.asset.myasset9}`]).to.be.equal(15e9)
 
+		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset1}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset2}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset3}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset4}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset5}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset6}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset7}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset8}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset9}`]).to.be.equal(0)
+
 		await this.network.witnessUntilStable(response.response_unit)
 
 		const balanceAfterResponseStable = await this.network.wallet.alice.getBalance()
@@ -1014,6 +1067,17 @@ describe('Obyte Cascading Donations Bot Test Case 9 many assets', function () {
 		expect(vars[`charlie/charlieproject_total_received_${this.network.asset.myasset10}`]).to.be.equal(15e9)
 		expect(vars[`alice/aliceproject_to_charlie/charlieproject_${this.network.asset.myasset10}`]).to.be.equal(15e9)
 
+		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset1}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset2}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset3}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset4}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset5}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset6}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset7}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset8}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset9}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset10}`]).to.be.equal(0)
+
 		await this.network.witnessUntilStable(response.response_unit)
 
 		const balanceAfterResponseStable = await this.network.wallet.alice.getBalance()
@@ -1024,7 +1088,7 @@ describe('Obyte Cascading Donations Bot Test Case 9 many assets', function () {
 	it('9.4.1 Check alice balance', async () => {
 		const balance = await this.network.wallet.alice.getBalance()
 		expect(Object.keys(balance).map(key => ({ [key]: balance[key].stable }))).to.be.deep.equalInAnyOrder([
-			{ base: 884489 },
+			{ base: 884496 },
 			{ [this.network.asset.myasset1]: 70e9 },
 			{ [this.network.asset.myasset2]: 70e9 },
 			{ [this.network.asset.myasset3]: 70e9 },

@@ -1,0 +1,79 @@
+{
+	bounce_fees: { base: 10000 },
+	messages: {
+		cases: [
+			{
+				if: `{trigger.data.set_rules}`,
+				messages: [
+					{
+						app: 'payment',
+						payload: {
+							asset: 'base',
+							outputs: [
+								{
+									address: `{trigger.data.aa}`,
+									amount: `{100}`
+								}
+							]
+						}
+					},
+					{
+						app: 'data',
+						payload: {
+							set_rules: 1,
+							repo: 'owner/repo'
+						}
+					}
+				]
+			},
+			{
+				if: `{trigger.data.distribute}`,
+				messages: [
+					{
+						app: 'payment',
+						payload: {
+							asset: 'base',
+							outputs: [
+								{
+									address: `{trigger.data.aa}`,
+									amount: `{100}`
+								}
+							]
+						}
+					},
+					{
+						app: 'data',
+						payload: {
+							distribute: 1,
+							repo: 'owner/repo'
+						}
+					}
+				]
+			},
+			{
+				if: `{trigger.data.donate}`,
+				messages: [
+					{
+						app: 'payment',
+						payload: {
+							asset: 'base',
+							outputs: [
+								{
+									address: `{trigger.data.aa}`,
+									amount: `{100}`
+								}
+							]
+						}
+					},
+					{
+						app: 'data',
+						payload: {
+							donate: 1,
+							repo: 'owner/repo'
+						}
+					}
+				]
+			}
+		]
+	}
+}

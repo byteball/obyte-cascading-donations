@@ -96,8 +96,7 @@ describe('Obyte Cascading Donations Bot Test Case 8 Nested donations 1 level(cus
 			amount: 1e4,
 			data: {
 				set_rules: 1,
-				owner: 'alice',
-				project: 'aliceproject',
+				repo: 'alice/aliceproject',
 				rules: {
 					'bob/bobproject': 45,
 					'eva/evaproject': 25
@@ -120,8 +119,7 @@ describe('Obyte Cascading Donations Bot Test Case 8 Nested donations 1 level(cus
 			amount: 1e4,
 			data: {
 				set_rules: 1,
-				owner: 'bob',
-				project: 'bobproject'
+				repo: 'bob/bobproject'
 			}
 		})
 
@@ -215,6 +213,10 @@ describe('Obyte Cascading Donations Bot Test Case 8 Nested donations 1 level(cus
 		expect(vars[`eva/evaproject_total_received_${this.network.asset.myasset}`]).to.be.equal(25e9)
 		expect(vars[`alice/aliceproject_to_eva/evaproject_${this.network.asset.myasset}`]).to.be.equal(25e9)
 
+		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset}`]).to.be.equal(0)
+		expect(vars[`bob/bobproject_unclaimed_${this.network.asset.myasset}`]).to.be.undefined
+		expect(vars[`eva/evaproject_unclaimed_${this.network.asset.myasset}`]).to.be.undefined
+
 		await this.network.witnessUntilStable(response.response_unit)
 
 		const balanceAfterResponseStable = await this.network.wallet.alice.getBalance()
@@ -264,6 +266,10 @@ describe('Obyte Cascading Donations Bot Test Case 8 Nested donations 1 level(cus
 		expect(vars[`eva/evaproject_total_received_${this.network.asset.myasset}`]).to.be.equal(25e9)
 		expect(vars[`alice/aliceproject_to_eva/evaproject_${this.network.asset.myasset}`]).to.be.equal(25e9)
 
+		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset}`]).to.be.equal(0)
+		expect(vars[`bob/bobproject_unclaimed_${this.network.asset.myasset}`]).to.be.equal(0)
+		expect(vars[`eva/evaproject_unclaimed_${this.network.asset.myasset}`]).to.be.undefined
+
 		await this.network.witnessUntilStable(response.response_unit)
 
 		const balanceAfterResponseStable = await this.network.wallet.bob.getBalance()
@@ -277,8 +283,7 @@ describe('Obyte Cascading Donations Bot Test Case 8 Nested donations 1 level(cus
 			amount: 1e4,
 			data: {
 				set_rules: 1,
-				owner: 'eva',
-				project: 'evaproject'
+				repo: 'eva/evaproject'
 			}
 		})
 
@@ -334,6 +339,10 @@ describe('Obyte Cascading Donations Bot Test Case 8 Nested donations 1 level(cus
 		expect(vars[`eva/evaproject_pool_${this.network.asset.myasset}`]).to.be.equal(0)
 		expect(vars[`eva/evaproject_total_received_${this.network.asset.myasset}`]).to.be.equal(25e9)
 		expect(vars[`alice/aliceproject_to_eva/evaproject_${this.network.asset.myasset}`]).to.be.equal(25e9)
+
+		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset}`]).to.be.equal(0)
+		expect(vars[`bob/bobproject_unclaimed_${this.network.asset.myasset}`]).to.be.equal(0)
+		expect(vars[`eva/evaproject_unclaimed_${this.network.asset.myasset}`]).to.be.equal(0)
 
 		await this.network.witnessUntilStable(response.response_unit)
 

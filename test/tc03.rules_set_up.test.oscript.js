@@ -56,8 +56,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 			amount: 1e4,
 			data: {
 				set_rules: 1,
-				owner: 'alice',
-				project: 'myproject',
+				repo: 'alice/myproject',
 				rules: {
 					'repo/1': 2,
 					'repo/2': 2,
@@ -92,7 +91,6 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 		expect(response.response.error).to.be.equal('Maximum number of nested repositories is 10')
 
 		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars['alice/myproject_owner']).to.be.undefined
 		expect(vars['alice/myproject_rules']).to.be.undefined
 	}).timeout(60000)
 
@@ -102,8 +100,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 			amount: 1e4,
 			data: {
 				set_rules: 1,
-				owner: 'alice',
-				project: 'myproject',
+				repo: 'alice/myproject',
 				rules: {
 					'repo/1': 2,
 					'repo/2': 2,
@@ -129,7 +126,6 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 		expect(response.response.error).to.be.equal('Maximum number of nested repositories is 10')
 
 		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars['alice/myproject_owner']).to.be.undefined
 		expect(vars['alice/myproject_rules']).to.be.undefined
 	}).timeout(60000)
 
@@ -139,8 +135,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 			amount: 1e4,
 			data: {
 				set_rules: 1,
-				owner: 'alice',
-				project: 'myproject',
+				repo: 'alice/myproject',
 				rules: {
 					'repo/1': 2,
 					'repo/2': 2,
@@ -165,7 +160,6 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 		expect(response.response.responseVars.message).to.be.equal('Rules for alice/myproject are set')
 
 		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars['alice/myproject_owner']).to.be.equal(await this.network.wallet.alice.getAddress())
 		expect(vars['alice/myproject_rules']).to.be.deep.equal({
 			'repo/1': 2,
 			'repo/2': 2,
@@ -186,8 +180,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 			amount: 1e4,
 			data: {
 				set_rules: 1,
-				owner: 'alice',
-				project: 'myproject',
+				repo: 'alice/myproject',
 				rules: {
 					'repo/1': 2,
 					'repo/2': 2,
@@ -207,7 +200,6 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 		expect(response.response.responseVars.message).to.be.equal('Rules for alice/myproject are set')
 
 		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars['alice/myproject_owner']).to.be.equal(await this.network.wallet.alice.getAddress())
 		expect(vars['alice/myproject_rules']).to.be.deep.equal({
 			'repo/1': 2,
 			'repo/2': 2,
@@ -223,8 +215,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 			amount: 1e4,
 			data: {
 				set_rules: 1,
-				owner: 'alice',
-				project: 'myproject',
+				repo: 'alice/myproject',
 				rules: {
 					'repo/1': 2
 				}
@@ -240,7 +231,6 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 		expect(response.response.responseVars.message).to.be.equal('Rules for alice/myproject are set')
 
 		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars['alice/myproject_owner']).to.be.equal(await this.network.wallet.alice.getAddress())
 		expect(vars['alice/myproject_rules']).to.be.deep.equal({
 			'repo/1': 2
 		})
@@ -252,8 +242,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 			amount: 1e4,
 			data: {
 				set_rules: 1,
-				owner: 'alice',
-				project: 'myproject'
+				repo: 'alice/myproject'
 			}
 		})
 
@@ -266,7 +255,6 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 		expect(response.response.responseVars.message).to.be.equal('Rules for alice/myproject are set')
 
 		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars['alice/myproject_owner']).to.be.equal(await this.network.wallet.alice.getAddress())
 		expect(vars['alice/myproject_rules']).to.be.deep.equal({})
 	}).timeout(60000)
 
@@ -276,8 +264,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 			amount: 1e4,
 			data: {
 				set_rules: 1,
-				owner: 'alice',
-				project: 'myproject',
+				repo: 'alice/myproject',
 				rules: {
 					'repo/1': 25,
 					'repo/2': 25,
@@ -298,7 +285,6 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 
 		// rules are same from previous set up
 		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars['alice/myproject_owner']).to.be.equal(await this.network.wallet.alice.getAddress())
 		expect(vars['alice/myproject_rules']).to.be.deep.equal({})
 	}).timeout(60000)
 
@@ -308,8 +294,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 			amount: 1e4,
 			data: {
 				set_rules: 1,
-				owner: 'alice',
-				project: 'myproject',
+				repo: 'alice/myproject',
 				rules: {
 					'repo/1': 25,
 					'repo/2': 25,
@@ -328,7 +313,6 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 		expect(response.response.responseVars.message).to.be.equal('Rules for alice/myproject are set')
 
 		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars['alice/myproject_owner']).to.be.equal(await this.network.wallet.alice.getAddress())
 		expect(vars['alice/myproject_rules']).to.be.deep.equal({
 			'repo/1': 25,
 			'repo/2': 25,
@@ -343,8 +327,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 			amount: 1e4,
 			data: {
 				set_rules: 1,
-				owner: 'alice',
-				project: 'myproject',
+				repo: 'alice/myproject',
 				rules: {
 					'repo/1': 25,
 					'repo/2': 25
@@ -361,7 +344,6 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 		expect(response.response.responseVars.message).to.be.equal('Rules for alice/myproject are set')
 
 		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars['alice/myproject_owner']).to.be.equal(await this.network.wallet.alice.getAddress())
 		expect(vars['alice/myproject_rules']).to.be.deep.equal({
 			'repo/1': 25,
 			'repo/2': 25
@@ -374,8 +356,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 			amount: 1e4,
 			data: {
 				set_rules: 1,
-				owner: 'alice',
-				project: 'myproject',
+				repo: 'alice/myproject',
 				rules: {
 					'repo/1': 25,
 					'alice/myproject': 25,
@@ -390,11 +371,10 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 
 		const { response } = await this.network.getAaResponseToUnit(unit)
 		expect(response.bounced).to.be.true
-		expect(response.response.error).to.be.equal('Invalid repo: alice/myproject Don\'t set own repo in rules; You will receive the unshared reminder')
+		expect(response.response.error).to.be.equal('Invalid repo: alice/myproject Don\'t set own repo in rules; You will receive the unshared remainder')
 
 		// rules are same from previous set up
 		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars['alice/myproject_owner']).to.be.equal(await this.network.wallet.alice.getAddress())
 		expect(vars['alice/myproject_rules']).to.be.deep.equal({
 			'repo/1': 25,
 			'repo/2': 25
@@ -407,8 +387,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 			amount: 1e4,
 			data: {
 				set_rules: 1,
-				owner: 'alice',
-				project: 'myproject',
+				repo: 'alice/myproject',
 				rules: {
 					'repo/1': '123'
 				}
@@ -428,8 +407,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 			amount: 1e4,
 			data: {
 				set_rules: 1,
-				owner: 'alice',
-				project: 'myproject',
+				repo: 'alice/myproject',
 				rules: {
 					'repo/1': 'asd'
 				}
@@ -449,8 +427,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 			amount: 1e4,
 			data: {
 				set_rules: 1,
-				owner: 'alice',
-				project: 'myproject',
+				repo: 'alice/myproject',
 				rules: {
 					'repo/1': true
 				}
@@ -470,8 +447,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 			amount: 1e4,
 			data: {
 				set_rules: 1,
-				owner: 'alice',
-				project: 'myproject',
+				repo: 'alice/myproject',
 				rules: {
 					'repo/1': { a: 123 }
 				}
@@ -491,8 +467,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 			amount: 1e4,
 			data: {
 				set_rules: 1,
-				owner: 'alice',
-				project: 'myproject',
+				repo: 'alice/myproject',
 				rules: {
 					'repo/1': [1, 2, 3]
 				}
@@ -512,8 +487,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 			amount: 1e4,
 			data: {
 				set_rules: 1,
-				owner: 'alice',
-				project: 'myproject',
+				repo: 'alice/myproject',
 				rules: {
 					wrongname: 5
 				}
@@ -533,8 +507,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 			amount: 1e4,
 			data: {
 				set_rules: 1,
-				owner: 'alice',
-				project: 'myproject',
+				repo: 'alice/myproject',
 				rules: {
 					'wrong/repo/name': 5
 				}
@@ -554,8 +527,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 			amount: 1e4,
 			data: {
 				set_rules: 1,
-				owner: 'alice',
-				project: 'myproject',
+				repo: 'alice/myproject',
 				rules: {
 					'/wrongname': 5
 				}
@@ -575,8 +547,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 			amount: 1e4,
 			data: {
 				set_rules: 1,
-				owner: 'alice',
-				project: 'myproject',
+				repo: 'alice/myproject',
 				rules: {
 					'wrongname/': 5
 				}
@@ -596,8 +567,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 			amount: 1e4,
 			data: {
 				set_rules: 1,
-				owner: 'alice',
-				project: 'myproject',
+				repo: 'alice/myproject',
 				rules: {
 					'repo/1': 20.5,
 					'repo/2': 20.123,
@@ -613,7 +583,6 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 		expect(response.response.responseVars.message).to.be.equal('Rules for alice/myproject are set')
 
 		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars['alice/myproject_owner']).to.be.equal(await this.network.wallet.alice.getAddress())
 		expect(vars['alice/myproject_rules']).to.be.deep.equal({
 			'repo/1': 20.5,
 			'repo/2': 20.123,
@@ -627,8 +596,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 			amount: 1e4,
 			data: {
 				set_rules: 1,
-				owner: 'alice',
-				project: 'myproject',
+				repo: 'alice/myproject',
 				rules: 123
 			}
 		})
@@ -646,8 +614,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 			amount: 1e4,
 			data: {
 				set_rules: 1,
-				owner: 'alice',
-				project: 'myproject',
+				repo: 'alice/myproject',
 				rules: 'asd'
 			}
 		})
@@ -665,8 +632,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 			amount: 1e4,
 			data: {
 				set_rules: 1,
-				owner: 'alice',
-				project: 'myproject',
+				repo: 'alice/myproject',
 				rules: true
 			}
 		})
@@ -684,8 +650,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 			amount: 1e4,
 			data: {
 				set_rules: 1,
-				owner: 'alice',
-				project: 'myproject',
+				repo: 'alice/myproject',
 				rules: [1, 2, 3]
 			}
 		})
