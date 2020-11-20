@@ -5,7 +5,7 @@
 
 const path = require('path')
 const AA_PATH = '../agent.aa'
-const { ATTESTOR_MNEMONIC } = require('./constants')
+const { ATTESTOR_MNEMONIC, DEFAULT_EXPENDABLE, BOUNCE_FEE } = require('./constants')
 
 describe('Obyte Cascading Donations Bot Test Case 6 attempt to set rules without attestation', function () {
 	this.timeout(120000)
@@ -15,14 +15,14 @@ describe('Obyte Cascading Donations Bot Test Case 6 attempt to set rules without
 			.with.asset({ myasset: {} })
 			.with.agent({ cascadingDonations: path.join(__dirname, AA_PATH) })
 			.with.wallet({ attestor: 100e9 }, ATTESTOR_MNEMONIC)
-			.with.wallet({ alice: 1e6 })
+			.with.wallet({ alice: DEFAULT_EXPENDABLE })
 			.run()
 	})
 
 	it('6.1.1 Alice attempts to set rules for a project, but has no attestation', async () => {
 		const { unit, error } = await this.network.wallet.alice.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				set_rules: 1,
 				repo: 'alice/myproject',
@@ -70,7 +70,7 @@ describe('Obyte Cascading Donations Bot Test Case 6 attempt to set rules without
 	it('6.3.1 Alice successfuly sets rules for a project', async () => {
 		const { unit, error } = await this.network.wallet.alice.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				set_rules: 1,
 				repo: 'alice/myproject',

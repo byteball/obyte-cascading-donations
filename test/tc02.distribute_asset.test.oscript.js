@@ -8,7 +8,7 @@
 
 const path = require('path')
 const AA_PATH = '../agent.aa'
-const { ATTESTOR_MNEMONIC } = require('./constants')
+const { ATTESTOR_MNEMONIC, BOUNCE_FEE } = require('./constants')
 
 describe('Obyte Cascading Donations Bot Test Case 2 Distribute custom asset without rules', function () {
 	this.timeout(120000)
@@ -47,7 +47,7 @@ describe('Obyte Cascading Donations Bot Test Case 2 Distribute custom asset with
 	it('2.1.1 Alice sets up project with empty rules', async () => {
 		const { unit, error } = await this.network.wallet.alice.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				set_rules: 1,
 				repo: 'alice/myproject'
@@ -72,7 +72,7 @@ describe('Obyte Cascading Donations Bot Test Case 2 Distribute custom asset with
 			base_outputs: [
 				{
 					address: this.network.agent.cascadingDonations,
-					amount: 1e4
+					amount: BOUNCE_FEE
 				}
 			],
 			asset_outputs: [
@@ -116,7 +116,7 @@ describe('Obyte Cascading Donations Bot Test Case 2 Distribute custom asset with
 	it('2.3.1 Alice triggers distribution', async () => {
 		const { unit, error } = await this.network.wallet.alice.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				distribute: 1,
 				repo: 'alice/myproject',
@@ -158,7 +158,7 @@ describe('Obyte Cascading Donations Bot Test Case 2 Distribute custom asset with
 			base_outputs: [
 				{
 					address: this.network.agent.cascadingDonations,
-					amount: 1e4
+					amount: BOUNCE_FEE
 				}
 			],
 			asset_outputs: [
@@ -202,7 +202,7 @@ describe('Obyte Cascading Donations Bot Test Case 2 Distribute custom asset with
 	it('2.5.1 Bob triggers distribution', async () => {
 		const { unit, error } = await this.network.wallet.bob.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				distribute: 1,
 				repo: 'alice/myproject',
@@ -242,7 +242,7 @@ describe('Obyte Cascading Donations Bot Test Case 2 Distribute custom asset with
 	it('2.6.1 Alice claims unclaimed pool', async () => {
 		const { unit, error } = await this.network.wallet.alice.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				distribute: 1,
 				repo: 'alice/myproject',

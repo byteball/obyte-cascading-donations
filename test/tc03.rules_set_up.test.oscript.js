@@ -16,7 +16,7 @@
 
 const path = require('path')
 const AA_PATH = '../agent.aa'
-const { ATTESTOR_MNEMONIC } = require('./constants')
+const { ATTESTOR_MNEMONIC, BOUNCE_FEE } = require('./constants')
 
 describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 	this.timeout(120000)
@@ -53,7 +53,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 	it('3.1.1 Alice fails to set rules with 20 different repos', async () => {
 		const { unit, error } = await this.network.wallet.alice.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				set_rules: 1,
 				repo: 'alice/myproject',
@@ -97,7 +97,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 	it('3.2.1 Alice fails to set rules with 11 different repos', async () => {
 		const { unit, error } = await this.network.wallet.alice.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				set_rules: 1,
 				repo: 'alice/myproject',
@@ -132,7 +132,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 	it('3.3.1 Alice succeeds to set rules with 10 different repos', async () => {
 		const { unit, error } = await this.network.wallet.alice.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				set_rules: 1,
 				repo: 'alice/myproject',
@@ -177,7 +177,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 	it('3.4.1 Alice succeeds to reset rules with 5 different repos', async () => {
 		const { unit, error } = await this.network.wallet.alice.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				set_rules: 1,
 				repo: 'alice/myproject',
@@ -212,7 +212,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 	it('3.5.1 Alice succeeds to reset rules with 1 repo', async () => {
 		const { unit, error } = await this.network.wallet.alice.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				set_rules: 1,
 				repo: 'alice/myproject',
@@ -239,7 +239,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 	it('3.6.1 Alice succeeds to reset rules with empty set', async () => {
 		const { unit, error } = await this.network.wallet.alice.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				set_rules: 1,
 				repo: 'alice/myproject'
@@ -261,7 +261,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 	it('3.7.1 Alice fails to set rules that exceeds 100%', async () => {
 		const { unit, error } = await this.network.wallet.alice.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				set_rules: 1,
 				repo: 'alice/myproject',
@@ -291,7 +291,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 	it('3.8.1 Alice succeeds to set rules that equals 100%', async () => {
 		const { unit, error } = await this.network.wallet.alice.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				set_rules: 1,
 				repo: 'alice/myproject',
@@ -324,7 +324,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 	it('3.9.1 Alice succeeds to set rules that equals 50%', async () => {
 		const { unit, error } = await this.network.wallet.alice.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				set_rules: 1,
 				repo: 'alice/myproject',
@@ -353,7 +353,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 	it('3.10.1 Alice fails to set rules with own repo', async () => {
 		const { unit, error } = await this.network.wallet.alice.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				set_rules: 1,
 				repo: 'alice/myproject',
@@ -384,7 +384,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 	it('3.11.1 Alice fails to set rules with not a number in key(number in string)', async () => {
 		const { unit } = await this.network.wallet.alice.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				set_rules: 1,
 				repo: 'alice/myproject',
@@ -404,7 +404,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 	it('3.11.2 Alice fails to set rules with not a number in key(string)', async () => {
 		const { unit } = await this.network.wallet.alice.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				set_rules: 1,
 				repo: 'alice/myproject',
@@ -424,7 +424,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 	it('3.11.3 Alice fails to set rules with not a number in key(boolean)', async () => {
 		const { unit } = await this.network.wallet.alice.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				set_rules: 1,
 				repo: 'alice/myproject',
@@ -444,7 +444,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 	it('3.11.4 Alice fails to set rules with not a number in key(object)', async () => {
 		const { unit } = await this.network.wallet.alice.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				set_rules: 1,
 				repo: 'alice/myproject',
@@ -464,7 +464,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 	it('3.11.5 Alice fails to set rules with not a number in key(array)', async () => {
 		const { unit } = await this.network.wallet.alice.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				set_rules: 1,
 				repo: 'alice/myproject',
@@ -484,7 +484,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 	it('3.12.1 Alice fails to set rules with wrong repo name(without slash)', async () => {
 		const { unit } = await this.network.wallet.alice.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				set_rules: 1,
 				repo: 'alice/myproject',
@@ -504,7 +504,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 	it('3.12.2 Alice fails to set rules with wrong repo name(two slash)', async () => {
 		const { unit } = await this.network.wallet.alice.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				set_rules: 1,
 				repo: 'alice/myproject',
@@ -524,7 +524,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 	it('3.12.3 Alice fails to set rules with wrong repo name(slash in start)', async () => {
 		const { unit } = await this.network.wallet.alice.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				set_rules: 1,
 				repo: 'alice/myproject',
@@ -544,7 +544,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 	it('3.12.4 Alice fails to set rules with wrong repo name(slash in the end)', async () => {
 		const { unit } = await this.network.wallet.alice.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				set_rules: 1,
 				repo: 'alice/myproject',
@@ -564,7 +564,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 	it('3.13.1 Alice succeeds to set rules with float key', async () => {
 		const { unit } = await this.network.wallet.alice.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				set_rules: 1,
 				repo: 'alice/myproject',
@@ -593,7 +593,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 	it('3.14.1 Alice fails to set not an object rules(number)', async () => {
 		const { unit } = await this.network.wallet.alice.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				set_rules: 1,
 				repo: 'alice/myproject',
@@ -611,7 +611,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 	it('3.14.2 Alice fails to set not an object rules(string)', async () => {
 		const { unit } = await this.network.wallet.alice.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				set_rules: 1,
 				repo: 'alice/myproject',
@@ -629,7 +629,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 	it('3.14.3 Alice fails to set not an object rules(boolean)', async () => {
 		const { unit } = await this.network.wallet.alice.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				set_rules: 1,
 				repo: 'alice/myproject',
@@ -647,7 +647,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 	it('3.14.4 Alice fails to set not an object rules(array)', async () => {
 		const { unit } = await this.network.wallet.alice.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				set_rules: 1,
 				repo: 'alice/myproject',

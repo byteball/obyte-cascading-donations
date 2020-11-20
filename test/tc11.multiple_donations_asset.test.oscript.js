@@ -15,7 +15,7 @@
 
 const path = require('path')
 const AA_PATH = '../agent.aa'
-const { ATTESTOR_MNEMONIC } = require('./constants')
+const { ATTESTOR_MNEMONIC, DEFAULT_EXPENDABLE, BOUNCE_FEE } = require('./constants')
 
 describe('Obyte Cascading Donations Bot Test Case 11 Multiple donations(custom asset)', function () {
 	this.timeout(120000)
@@ -25,10 +25,10 @@ describe('Obyte Cascading Donations Bot Test Case 11 Multiple donations(custom a
 			.with.asset({ myasset: {} })
 			.with.agent({ cascadingDonations: path.join(__dirname, AA_PATH) })
 			.with.wallet({ attestor: 100e9 }, ATTESTOR_MNEMONIC)
-			.with.wallet({ alice: 1e6 })
-			.with.wallet({ bob: { base: 1e6, myasset: 100e9 } })
-			.with.wallet({ eva: { base: 1e6, myasset: 100e9 } })
-			.with.wallet({ charlie: { base: 1e6, myasset: 100e9 } })
+			.with.wallet({ alice: DEFAULT_EXPENDABLE })
+			.with.wallet({ bob: { base: DEFAULT_EXPENDABLE, myasset: 100e9 } })
+			.with.wallet({ eva: { base: DEFAULT_EXPENDABLE, myasset: 100e9 } })
+			.with.wallet({ charlie: { base: DEFAULT_EXPENDABLE, myasset: 100e9 } })
 			.run()
 	})
 
@@ -58,7 +58,7 @@ describe('Obyte Cascading Donations Bot Test Case 11 Multiple donations(custom a
 			base_outputs: [
 				{
 					address: this.network.agent.cascadingDonations,
-					amount: 1e4
+					amount: BOUNCE_FEE
 				}
 			],
 			asset_outputs: [
@@ -94,7 +94,7 @@ describe('Obyte Cascading Donations Bot Test Case 11 Multiple donations(custom a
 	it('11.2.1 Alice sets up project rules', async () => {
 		const { unit, error } = await this.network.wallet.alice.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				set_rules: 1,
 				repo: 'alice/aliceproject',
@@ -126,7 +126,7 @@ describe('Obyte Cascading Donations Bot Test Case 11 Multiple donations(custom a
 	it('11.3.1 Trigger aliceproject distribution', async () => {
 		const { unit, error } = await this.network.wallet.alice.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				distribute: 1,
 				repo: 'alice/aliceproject',
@@ -149,7 +149,7 @@ describe('Obyte Cascading Donations Bot Test Case 11 Multiple donations(custom a
 			base_outputs: [
 				{
 					address: this.network.agent.cascadingDonations,
-					amount: 1e4
+					amount: BOUNCE_FEE
 				}
 			],
 			asset_outputs: [
@@ -187,7 +187,7 @@ describe('Obyte Cascading Donations Bot Test Case 11 Multiple donations(custom a
 			base_outputs: [
 				{
 					address: this.network.agent.cascadingDonations,
-					amount: 1e4
+					amount: BOUNCE_FEE
 				}
 			],
 			asset_outputs: [
@@ -223,7 +223,7 @@ describe('Obyte Cascading Donations Bot Test Case 11 Multiple donations(custom a
 	it('11.6.1 Trigger aliceproject distribution', async () => {
 		const { unit, error } = await this.network.wallet.alice.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				distribute: 1,
 				repo: 'alice/aliceproject',
@@ -246,7 +246,7 @@ describe('Obyte Cascading Donations Bot Test Case 11 Multiple donations(custom a
 			base_outputs: [
 				{
 					address: this.network.agent.cascadingDonations,
-					amount: 1e4
+					amount: BOUNCE_FEE
 				}
 			],
 			asset_outputs: [
@@ -284,7 +284,7 @@ describe('Obyte Cascading Donations Bot Test Case 11 Multiple donations(custom a
 			base_outputs: [
 				{
 					address: this.network.agent.cascadingDonations,
-					amount: 1e4
+					amount: BOUNCE_FEE
 				}
 			],
 			asset_outputs: [
@@ -322,7 +322,7 @@ describe('Obyte Cascading Donations Bot Test Case 11 Multiple donations(custom a
 			base_outputs: [
 				{
 					address: this.network.agent.cascadingDonations,
-					amount: 1e4
+					amount: BOUNCE_FEE
 				}
 			],
 			asset_outputs: [
@@ -358,7 +358,7 @@ describe('Obyte Cascading Donations Bot Test Case 11 Multiple donations(custom a
 	it('11.10.1 Trigger aliceproject distribution', async () => {
 		const { unit, error } = await this.network.wallet.alice.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				distribute: 1,
 				repo: 'alice/aliceproject',
@@ -393,7 +393,7 @@ describe('Obyte Cascading Donations Bot Test Case 11 Multiple donations(custom a
 		expect(vars[`alice/aliceproject_to_repo/2_${this.network.asset.myasset}`]).to.be.equal(2.79e9)
 		expect(vars[`alice/aliceproject_to_repo/3_${this.network.asset.myasset}`]).to.be.equal(8.388e9)
 
-		expect(vars[`alice/aliceproject_total_received_${this.network.asset.myasset}`]).to.be.equal(36000000000)
+		expect(vars[`alice/aliceproject_total_received_${this.network.asset.myasset}`]).to.be.equal(36e9)
 
 		expect(vars[`paid_to_${aliceAddress}_${this.network.asset.myasset}`]).to.be.equal(23.742e9)
 

@@ -17,11 +17,12 @@
 			typeof($attestation) == 'string' AND $attestation == $github_username
 		};
 
-		$check_repo_str = ($str) => {
+		$parse_repo_str = ($str) => {
 			$sp = split($str, '/');
 			if (length($sp) != 2 OR length($sp[0]) < 1 OR length($sp[1]) < 1) {
 				bounce('Invalid repo: ' || $str);
 			}
+			$sp
 		};
 
 		$check_rules_and_count_total = ($rules, $own_repo) => {
@@ -38,7 +39,7 @@
 			}
 
 			$total = reduce($rules, 10, ($acc, $key, $value) => {
-				$check_repo_str($key);
+				$parse_repo_str($key);
 				if ($key == $own_repo) {
 					bounce('Invalid repo: ' || $key || ' Don\'t set own repo in rules; You will receive the unshared remainder');
 				}
@@ -66,8 +67,7 @@
 								bounce('Not enough fee to pay rules storage');
 							}
 
-							$check_repo_str(trigger.data.repo);
-							$sp = split(trigger.data.repo, '/');
+							$sp = $parse_repo_str(trigger.data.repo);
 							$owner = $sp[0];
 							$project = $sp[1];
 
@@ -95,7 +95,7 @@
 					{
 						app: 'state',
 						state: `{
-							$check_repo_str(trigger.data.repo);
+							$parse_repo_str(trigger.data.repo);
 
 							$base_pool_var = trigger.data.repo || '_pool_base';
 							if (trigger.output[[asset=base]] < 1000) {
@@ -133,8 +133,7 @@
 			{
 				if: `{trigger.data.distribute AND trigger.data.repo}`,
 				init: `{
-					$check_repo_str(trigger.data.repo);
-					$sp = split(trigger.data.repo, '/');
+					$sp = $parse_repo_str(trigger.data.repo);
 					$owner = $sp[0];
 					$project = $sp[1];
 					$rules_var = trigger.data.repo || '_rules';

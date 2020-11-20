@@ -7,7 +7,8 @@
 
 const path = require('path')
 const AA_PATH = '../agent.aa'
-const { ATTESTOR_MNEMONIC } = require('./constants')
+const { ATTESTOR_MNEMONIC, BOUNCE_FEE, DEFAULT_EXPENDABLE } = require('./constants')
+const { calculateCommission } = require('./utils')
 
 describe('Obyte Cascading Donations Bot Test Case 9 many assets', function () {
 	this.timeout(240000)
@@ -26,10 +27,10 @@ describe('Obyte Cascading Donations Bot Test Case 9 many assets', function () {
 			.with.asset({ myasset10: {} })
 			.with.agent({ cascadingDonations: path.join(__dirname, AA_PATH) })
 			.with.wallet({ attestor: 100e9 }, ATTESTOR_MNEMONIC)
-			.with.wallet({ alice: 1e6 })
+			.with.wallet({ alice: DEFAULT_EXPENDABLE })
 			.with.wallet({
 				charlie: {
-					base: 1e6,
+					base: DEFAULT_EXPENDABLE,
 					myasset1: 100e9,
 					myasset2: 100e9,
 					myasset3: 100e9,
@@ -43,6 +44,11 @@ describe('Obyte Cascading Donations Bot Test Case 9 many assets', function () {
 				}
 			})
 			.run()
+
+		this.expenses = {
+			alice: 0,
+			bob: 0
+		}
 	})
 
 	it('9.0.1 Publish alice attestation profile', async () => {
@@ -69,7 +75,7 @@ describe('Obyte Cascading Donations Bot Test Case 9 many assets', function () {
 	it('9.1.1 Set up rules for aliceproject', async () => {
 		const { unit, error } = await this.network.wallet.alice.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				set_rules: 1,
 				repo: 'alice/aliceproject',
@@ -84,6 +90,7 @@ describe('Obyte Cascading Donations Bot Test Case 9 many assets', function () {
 		expect(unit).to.be.validUnit
 		expect(error).to.be.null
 		await this.network.witnessUntilStable(unit)
+		this.expenses.alice += await calculateCommission(this.network, unit) + BOUNCE_FEE
 
 		const { response } = await this.network.getAaResponseToUnit(unit)
 		expect(response.bounced).to.be.false
@@ -95,7 +102,7 @@ describe('Obyte Cascading Donations Bot Test Case 9 many assets', function () {
 			base_outputs: [
 				{
 					address: this.network.agent.cascadingDonations,
-					amount: 1e4
+					amount: BOUNCE_FEE
 				}
 			],
 			asset_outputs: [
@@ -120,6 +127,7 @@ describe('Obyte Cascading Donations Bot Test Case 9 many assets', function () {
 		expect(unit).to.be.validUnit
 		expect(error).to.be.null
 		await this.network.witnessUntilStable(unit)
+		this.expenses.charlie += await calculateCommission(this.network, unit) + BOUNCE_FEE
 
 		const { response } = await this.network.getAaResponseToUnit(unit)
 
@@ -138,7 +146,7 @@ describe('Obyte Cascading Donations Bot Test Case 9 many assets', function () {
 			base_outputs: [
 				{
 					address: this.network.agent.cascadingDonations,
-					amount: 1e4
+					amount: BOUNCE_FEE
 				}
 			],
 			asset_outputs: [
@@ -163,6 +171,7 @@ describe('Obyte Cascading Donations Bot Test Case 9 many assets', function () {
 		expect(unit).to.be.validUnit
 		expect(error).to.be.null
 		await this.network.witnessUntilStable(unit)
+		this.expenses.charlie += await calculateCommission(this.network, unit) + BOUNCE_FEE
 
 		const { response } = await this.network.getAaResponseToUnit(unit)
 
@@ -181,7 +190,7 @@ describe('Obyte Cascading Donations Bot Test Case 9 many assets', function () {
 			base_outputs: [
 				{
 					address: this.network.agent.cascadingDonations,
-					amount: 1e4
+					amount: BOUNCE_FEE
 				}
 			],
 			asset_outputs: [
@@ -206,6 +215,7 @@ describe('Obyte Cascading Donations Bot Test Case 9 many assets', function () {
 		expect(unit).to.be.validUnit
 		expect(error).to.be.null
 		await this.network.witnessUntilStable(unit)
+		this.expenses.charlie += await calculateCommission(this.network, unit) + BOUNCE_FEE
 
 		const { response } = await this.network.getAaResponseToUnit(unit)
 
@@ -224,7 +234,7 @@ describe('Obyte Cascading Donations Bot Test Case 9 many assets', function () {
 			base_outputs: [
 				{
 					address: this.network.agent.cascadingDonations,
-					amount: 1e4
+					amount: BOUNCE_FEE
 				}
 			],
 			asset_outputs: [
@@ -249,6 +259,7 @@ describe('Obyte Cascading Donations Bot Test Case 9 many assets', function () {
 		expect(unit).to.be.validUnit
 		expect(error).to.be.null
 		await this.network.witnessUntilStable(unit)
+		this.expenses.charlie += await calculateCommission(this.network, unit) + BOUNCE_FEE
 
 		const { response } = await this.network.getAaResponseToUnit(unit)
 
@@ -267,7 +278,7 @@ describe('Obyte Cascading Donations Bot Test Case 9 many assets', function () {
 			base_outputs: [
 				{
 					address: this.network.agent.cascadingDonations,
-					amount: 1e4
+					amount: BOUNCE_FEE
 				}
 			],
 			asset_outputs: [
@@ -292,6 +303,7 @@ describe('Obyte Cascading Donations Bot Test Case 9 many assets', function () {
 		expect(unit).to.be.validUnit
 		expect(error).to.be.null
 		await this.network.witnessUntilStable(unit)
+		this.expenses.charlie += await calculateCommission(this.network, unit) + BOUNCE_FEE
 
 		const { response } = await this.network.getAaResponseToUnit(unit)
 
@@ -310,7 +322,7 @@ describe('Obyte Cascading Donations Bot Test Case 9 many assets', function () {
 			base_outputs: [
 				{
 					address: this.network.agent.cascadingDonations,
-					amount: 1e4
+					amount: BOUNCE_FEE
 				}
 			],
 			asset_outputs: [
@@ -335,6 +347,7 @@ describe('Obyte Cascading Donations Bot Test Case 9 many assets', function () {
 		expect(unit).to.be.validUnit
 		expect(error).to.be.null
 		await this.network.witnessUntilStable(unit)
+		this.expenses.charlie += await calculateCommission(this.network, unit) + BOUNCE_FEE
 
 		const { response } = await this.network.getAaResponseToUnit(unit)
 
@@ -353,7 +366,7 @@ describe('Obyte Cascading Donations Bot Test Case 9 many assets', function () {
 			base_outputs: [
 				{
 					address: this.network.agent.cascadingDonations,
-					amount: 1e4
+					amount: BOUNCE_FEE
 				}
 			],
 			asset_outputs: [
@@ -378,6 +391,7 @@ describe('Obyte Cascading Donations Bot Test Case 9 many assets', function () {
 		expect(unit).to.be.validUnit
 		expect(error).to.be.null
 		await this.network.witnessUntilStable(unit)
+		this.expenses.charlie += await calculateCommission(this.network, unit) + BOUNCE_FEE
 
 		const { response } = await this.network.getAaResponseToUnit(unit)
 
@@ -396,7 +410,7 @@ describe('Obyte Cascading Donations Bot Test Case 9 many assets', function () {
 			base_outputs: [
 				{
 					address: this.network.agent.cascadingDonations,
-					amount: 1e4
+					amount: BOUNCE_FEE
 				}
 			],
 			asset_outputs: [
@@ -421,6 +435,7 @@ describe('Obyte Cascading Donations Bot Test Case 9 many assets', function () {
 		expect(unit).to.be.validUnit
 		expect(error).to.be.null
 		await this.network.witnessUntilStable(unit)
+		this.expenses.charlie += await calculateCommission(this.network, unit) + BOUNCE_FEE
 
 		const { response } = await this.network.getAaResponseToUnit(unit)
 
@@ -439,7 +454,7 @@ describe('Obyte Cascading Donations Bot Test Case 9 many assets', function () {
 			base_outputs: [
 				{
 					address: this.network.agent.cascadingDonations,
-					amount: 1e4
+					amount: BOUNCE_FEE
 				}
 			],
 			asset_outputs: [
@@ -464,6 +479,7 @@ describe('Obyte Cascading Donations Bot Test Case 9 many assets', function () {
 		expect(unit).to.be.validUnit
 		expect(error).to.be.null
 		await this.network.witnessUntilStable(unit)
+		this.expenses.charlie += await calculateCommission(this.network, unit) + BOUNCE_FEE
 
 		const { response } = await this.network.getAaResponseToUnit(unit)
 
@@ -482,7 +498,7 @@ describe('Obyte Cascading Donations Bot Test Case 9 many assets', function () {
 			base_outputs: [
 				{
 					address: this.network.agent.cascadingDonations,
-					amount: 1e4
+					amount: BOUNCE_FEE
 				}
 			],
 			asset_outputs: [
@@ -507,6 +523,7 @@ describe('Obyte Cascading Donations Bot Test Case 9 many assets', function () {
 		expect(unit).to.be.validUnit
 		expect(error).to.be.null
 		await this.network.witnessUntilStable(unit)
+		this.expenses.charlie += await calculateCommission(this.network, unit) + BOUNCE_FEE
 
 		const { response } = await this.network.getAaResponseToUnit(unit)
 
@@ -523,7 +540,7 @@ describe('Obyte Cascading Donations Bot Test Case 9 many assets', function () {
 	it('9.3.1 Trigger distribution for aliceproject(myasset1)', async () => {
 		const { unit, error } = await this.network.wallet.alice.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				distribute: 1,
 				repo: 'alice/aliceproject',
@@ -534,6 +551,7 @@ describe('Obyte Cascading Donations Bot Test Case 9 many assets', function () {
 		expect(unit).to.be.validUnit
 		expect(error).to.be.null
 		await this.network.witnessUntilStable(unit)
+		this.expenses.alice += await calculateCommission(this.network, unit) + BOUNCE_FEE
 
 		const balanceAfterDistribute = await this.network.wallet.alice.getBalance()
 		expect(balanceAfterDistribute[this.network.asset.myasset1].pending).to.be.equal(70e9)
@@ -575,7 +593,7 @@ describe('Obyte Cascading Donations Bot Test Case 9 many assets', function () {
 	it('9.3.2 Trigger distribution for aliceproject(myasset2)', async () => {
 		const { unit, error } = await this.network.wallet.alice.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				distribute: 1,
 				repo: 'alice/aliceproject',
@@ -586,6 +604,7 @@ describe('Obyte Cascading Donations Bot Test Case 9 many assets', function () {
 		expect(unit).to.be.validUnit
 		expect(error).to.be.null
 		await this.network.witnessUntilStable(unit)
+		this.expenses.alice += await calculateCommission(this.network, unit) + BOUNCE_FEE
 
 		const balanceAfterDistribute = await this.network.wallet.alice.getBalance()
 		expect(balanceAfterDistribute[this.network.asset.myasset2].pending).to.be.equal(70e9)
@@ -628,7 +647,7 @@ describe('Obyte Cascading Donations Bot Test Case 9 many assets', function () {
 	it('9.3.3 Trigger distribution for aliceproject(myasset3)', async () => {
 		const { unit, error } = await this.network.wallet.alice.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				distribute: 1,
 				repo: 'alice/aliceproject',
@@ -639,6 +658,7 @@ describe('Obyte Cascading Donations Bot Test Case 9 many assets', function () {
 		expect(unit).to.be.validUnit
 		expect(error).to.be.null
 		await this.network.witnessUntilStable(unit)
+		this.expenses.alice += await calculateCommission(this.network, unit) + BOUNCE_FEE
 
 		const balanceAfterDistribute = await this.network.wallet.alice.getBalance()
 		expect(balanceAfterDistribute[this.network.asset.myasset3].pending).to.be.equal(70e9)
@@ -682,7 +702,7 @@ describe('Obyte Cascading Donations Bot Test Case 9 many assets', function () {
 	it('9.3.4 Trigger distribution for aliceproject(myasset4)', async () => {
 		const { unit, error } = await this.network.wallet.alice.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				distribute: 1,
 				repo: 'alice/aliceproject',
@@ -693,6 +713,7 @@ describe('Obyte Cascading Donations Bot Test Case 9 many assets', function () {
 		expect(unit).to.be.validUnit
 		expect(error).to.be.null
 		await this.network.witnessUntilStable(unit)
+		this.expenses.alice += await calculateCommission(this.network, unit) + BOUNCE_FEE
 
 		const balanceAfterDistribute = await this.network.wallet.alice.getBalance()
 		expect(balanceAfterDistribute[this.network.asset.myasset4].pending).to.be.equal(70e9)
@@ -737,7 +758,7 @@ describe('Obyte Cascading Donations Bot Test Case 9 many assets', function () {
 	it('9.3.5 Trigger distribution for aliceproject(myasset5)', async () => {
 		const { unit, error } = await this.network.wallet.alice.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				distribute: 1,
 				repo: 'alice/aliceproject',
@@ -748,6 +769,7 @@ describe('Obyte Cascading Donations Bot Test Case 9 many assets', function () {
 		expect(unit).to.be.validUnit
 		expect(error).to.be.null
 		await this.network.witnessUntilStable(unit)
+		this.expenses.alice += await calculateCommission(this.network, unit) + BOUNCE_FEE
 
 		const balanceAfterDistribute = await this.network.wallet.alice.getBalance()
 		expect(balanceAfterDistribute[this.network.asset.myasset5].pending).to.be.equal(70e9)
@@ -793,7 +815,7 @@ describe('Obyte Cascading Donations Bot Test Case 9 many assets', function () {
 	it('9.3.6 Trigger distribution for aliceproject(myasset6)', async () => {
 		const { unit, error } = await this.network.wallet.alice.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				distribute: 1,
 				repo: 'alice/aliceproject',
@@ -804,6 +826,7 @@ describe('Obyte Cascading Donations Bot Test Case 9 many assets', function () {
 		expect(unit).to.be.validUnit
 		expect(error).to.be.null
 		await this.network.witnessUntilStable(unit)
+		this.expenses.alice += await calculateCommission(this.network, unit) + BOUNCE_FEE
 
 		const balanceAfterDistribute = await this.network.wallet.alice.getBalance()
 		expect(balanceAfterDistribute[this.network.asset.myasset6].pending).to.be.equal(70e9)
@@ -850,7 +873,7 @@ describe('Obyte Cascading Donations Bot Test Case 9 many assets', function () {
 	it('9.3.7 Trigger distribution for aliceproject(myasset7)', async () => {
 		const { unit, error } = await this.network.wallet.alice.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				distribute: 1,
 				repo: 'alice/aliceproject',
@@ -861,6 +884,7 @@ describe('Obyte Cascading Donations Bot Test Case 9 many assets', function () {
 		expect(unit).to.be.validUnit
 		expect(error).to.be.null
 		await this.network.witnessUntilStable(unit)
+		this.expenses.alice += await calculateCommission(this.network, unit) + BOUNCE_FEE
 
 		const balanceAfterDistribute = await this.network.wallet.alice.getBalance()
 		expect(balanceAfterDistribute[this.network.asset.myasset7].pending).to.be.equal(70e9)
@@ -908,7 +932,7 @@ describe('Obyte Cascading Donations Bot Test Case 9 many assets', function () {
 	it('9.3.8 Trigger distribution for aliceproject(myasset8)', async () => {
 		const { unit, error } = await this.network.wallet.alice.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				distribute: 1,
 				repo: 'alice/aliceproject',
@@ -919,6 +943,7 @@ describe('Obyte Cascading Donations Bot Test Case 9 many assets', function () {
 		expect(unit).to.be.validUnit
 		expect(error).to.be.null
 		await this.network.witnessUntilStable(unit)
+		this.expenses.alice += await calculateCommission(this.network, unit) + BOUNCE_FEE
 
 		const balanceAfterDistribute = await this.network.wallet.alice.getBalance()
 		expect(balanceAfterDistribute[this.network.asset.myasset8].pending).to.be.equal(70e9)
@@ -967,7 +992,7 @@ describe('Obyte Cascading Donations Bot Test Case 9 many assets', function () {
 	it('9.3.9 Trigger distribution for aliceproject(myasset9)', async () => {
 		const { unit, error } = await this.network.wallet.alice.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				distribute: 1,
 				repo: 'alice/aliceproject',
@@ -978,6 +1003,7 @@ describe('Obyte Cascading Donations Bot Test Case 9 many assets', function () {
 		expect(unit).to.be.validUnit
 		expect(error).to.be.null
 		await this.network.witnessUntilStable(unit)
+		this.expenses.alice += await calculateCommission(this.network, unit) + BOUNCE_FEE
 
 		const balanceAfterDistribute = await this.network.wallet.alice.getBalance()
 		expect(balanceAfterDistribute[this.network.asset.myasset9].pending).to.be.equal(70e9)
@@ -1027,7 +1053,7 @@ describe('Obyte Cascading Donations Bot Test Case 9 many assets', function () {
 	it('9.3.10 Trigger distribution for aliceproject(myasset10)', async () => {
 		const { unit, error } = await this.network.wallet.alice.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				distribute: 1,
 				repo: 'alice/aliceproject',
@@ -1038,6 +1064,7 @@ describe('Obyte Cascading Donations Bot Test Case 9 many assets', function () {
 		expect(unit).to.be.validUnit
 		expect(error).to.be.null
 		await this.network.witnessUntilStable(unit)
+		this.expenses.alice += await calculateCommission(this.network, unit) + BOUNCE_FEE
 
 		const balanceAfterDistribute = await this.network.wallet.alice.getBalance()
 		expect(balanceAfterDistribute[this.network.asset.myasset10].pending).to.be.equal(70e9)
@@ -1088,7 +1115,7 @@ describe('Obyte Cascading Donations Bot Test Case 9 many assets', function () {
 	it('9.4.1 Check alice balance', async () => {
 		const balance = await this.network.wallet.alice.getBalance()
 		expect(Object.keys(balance).map(key => ({ [key]: balance[key].stable }))).to.be.deep.equalInAnyOrder([
-			{ base: 884496 },
+			{ base: DEFAULT_EXPENDABLE - this.expenses.alice },
 			{ [this.network.asset.myasset1]: 70e9 },
 			{ [this.network.asset.myasset2]: 70e9 },
 			{ [this.network.asset.myasset3]: 70e9 },

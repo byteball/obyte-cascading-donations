@@ -12,7 +12,7 @@
 
 const path = require('path')
 const AA_PATH = '../agent.aa'
-const { ATTESTOR_MNEMONIC } = require('./constants')
+const { ATTESTOR_MNEMONIC, DEFAULT_EXPENDABLE, BOUNCE_FEE } = require('./constants')
 
 describe('Obyte Cascading Donations Bot Test Case 13 Nested donations 2 level(custom asset)', function () {
 	this.timeout(120000)
@@ -22,10 +22,10 @@ describe('Obyte Cascading Donations Bot Test Case 13 Nested donations 2 level(cu
 			.with.asset({ myasset: {} })
 			.with.agent({ cascadingDonations: path.join(__dirname, AA_PATH) })
 			.with.wallet({ attestor: 100e9 }, ATTESTOR_MNEMONIC)
-			.with.wallet({ alice: 1e6 })
-			.with.wallet({ bob: 1e6 })
-			.with.wallet({ eva: 1e6 })
-			.with.wallet({ charlie: { base: 1e6, myasset: 100e9 } })
+			.with.wallet({ alice: DEFAULT_EXPENDABLE })
+			.with.wallet({ bob: DEFAULT_EXPENDABLE })
+			.with.wallet({ eva: DEFAULT_EXPENDABLE })
+			.with.wallet({ charlie: { base: DEFAULT_EXPENDABLE, myasset: 100e9 } })
 			.run()
 	})
 
@@ -95,7 +95,7 @@ describe('Obyte Cascading Donations Bot Test Case 13 Nested donations 2 level(cu
 	it('13.1.1 Alice sets up project rules', async () => {
 		const { unit, error } = await this.network.wallet.alice.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				set_rules: 1,
 				repo: 'alice/aliceproject',
@@ -123,7 +123,7 @@ describe('Obyte Cascading Donations Bot Test Case 13 Nested donations 2 level(cu
 	it('13.1.2 Bob sets up project rules', async () => {
 		const { unit, error } = await this.network.wallet.bob.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				set_rules: 1,
 				repo: 'bob/bobproject',
@@ -151,7 +151,7 @@ describe('Obyte Cascading Donations Bot Test Case 13 Nested donations 2 level(cu
 	it('13.1.3 Eva sets up project rules', async () => {
 		const { unit, error } = await this.network.wallet.eva.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				set_rules: 1,
 				repo: 'eva/evaproject'
@@ -176,7 +176,7 @@ describe('Obyte Cascading Donations Bot Test Case 13 Nested donations 2 level(cu
 			base_outputs: [
 				{
 					address: this.network.agent.cascadingDonations,
-					amount: 1e4
+					amount: BOUNCE_FEE
 				}
 			],
 			asset_outputs: [
@@ -214,7 +214,7 @@ describe('Obyte Cascading Donations Bot Test Case 13 Nested donations 2 level(cu
 			base_outputs: [
 				{
 					address: this.network.agent.cascadingDonations,
-					amount: 1e4
+					amount: BOUNCE_FEE
 				}
 			],
 			asset_outputs: [
@@ -252,7 +252,7 @@ describe('Obyte Cascading Donations Bot Test Case 13 Nested donations 2 level(cu
 			base_outputs: [
 				{
 					address: this.network.agent.cascadingDonations,
-					amount: 1e4
+					amount: BOUNCE_FEE
 				}
 			],
 			asset_outputs: [
@@ -288,7 +288,7 @@ describe('Obyte Cascading Donations Bot Test Case 13 Nested donations 2 level(cu
 	it('13.5.1 Trigger aliceproject distribution', async () => {
 		const { unit, error } = await this.network.wallet.alice.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				distribute: 1,
 				repo: 'alice/aliceproject',
@@ -314,7 +314,7 @@ describe('Obyte Cascading Donations Bot Test Case 13 Nested donations 2 level(cu
 	it('13.6.1 Trigger bobproject distribution', async () => {
 		const { unit, error } = await this.network.wallet.bob.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				distribute: 1,
 				repo: 'bob/bobproject',
@@ -340,7 +340,7 @@ describe('Obyte Cascading Donations Bot Test Case 13 Nested donations 2 level(cu
 	it('13.7.1 Trigger evaproject distribution', async () => {
 		const { unit, error } = await this.network.wallet.eva.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				distribute: 1,
 				repo: 'eva/evaproject',

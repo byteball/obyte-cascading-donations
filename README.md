@@ -44,7 +44,7 @@ trigger.data.to - optional address. The attested owner can specify the addres th
 
 ### Set nickname
 
-Associate donator nickname with trigger.address. Previous nickname(if present) will be freed.
+Associate donor nickname with trigger.address. Previous nickname(if present) will be freed.
 
 ```javascript
 trigger.data.nickname - nickname string

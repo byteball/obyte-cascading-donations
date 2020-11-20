@@ -1,21 +1,27 @@
 // Test Case 10 Multiple donations(base)
 // 0. Publish alice attestation profile
-// 1. Bob donates to aliceproject
+// 1. Bob donates 1e9 to alice/aliceproject in base
 // 2. Alice sets up project rules
+// 	rules: {
+// 		'repo/1': 5,
+// 		'repo/2': 12.5,
+// 		'repo/3': 33
+// 	}
 // 3. Trigger aliceproject distribution
-// 4. Eva donates
-// 5. Charlie donates
-// 6. Trigger aliceproject distribution
-// 7. Bob donates
-// 8. Eva donates
-// 9. Charlie donates
-// 10. Trigger aliceproject distribution
+// 4. Eva donates 10e9 to alice/aliceproject in base
+// 5. Charlie donates 5e9 to alice/aliceproject in base
+// 6. Alice triggers aliceproject distribution
+// 7. Bob donates 8e9 to alice/aliceproject in base
+// 8. Eva donates 3e9 to alice/aliceproject in base
+// 9. Charlie donates 9e9 to alice/aliceproject in base
+// 10. Alice triggers aliceproject distribution
 // 11. Check Alice balances
 // 12. Check aliceproject state vars
 
 const path = require('path')
 const AA_PATH = '../agent.aa'
-const { ATTESTOR_MNEMONIC } = require('./constants')
+const { ATTESTOR_MNEMONIC, BOUNCE_FEE, DEFAULT_EXPENDABLE, DONATION_STORAGE_FEE } = require('./constants')
+const { calculateCommission } = require('./utils')
 
 describe('Obyte Cascading Donations Bot Test Case 10 Multiple donations(base)', function () {
 	this.timeout(120000)
@@ -24,11 +30,18 @@ describe('Obyte Cascading Donations Bot Test Case 10 Multiple donations(base)', 
 		this.network = await Network.create()
 			.with.agent({ cascadingDonations: path.join(__dirname, AA_PATH) })
 			.with.wallet({ attestor: 100e9 }, ATTESTOR_MNEMONIC)
-			.with.wallet({ alice: 1e6 })
-			.with.wallet({ bob: 100e9 + 1e6 })
-			.with.wallet({ eva: 100e9 + 1e6 })
-			.with.wallet({ charlie: 100e9 + 1e6 })
+			.with.wallet({ alice: DEFAULT_EXPENDABLE })
+			.with.wallet({ bob: 100e9 + DEFAULT_EXPENDABLE })
+			.with.wallet({ eva: 100e9 + DEFAULT_EXPENDABLE })
+			.with.wallet({ charlie: 100e9 + DEFAULT_EXPENDABLE })
 			.run()
+
+		this.expenses = {
+			alice: 0,
+			bob: 0,
+			eva: 0,
+			charlie: 0
+		}
 	})
 
 	it('10.0.1 Publish alice attestation profile', async () => {
@@ -55,7 +68,7 @@ describe('Obyte Cascading Donations Bot Test Case 10 Multiple donations(base)', 
 	it('10.1.1 Bob donates to Alice in base asset', async () => {
 		const { unit, error } = await this.network.wallet.bob.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e9 + 1000,
+			amount: 1e9 + DONATION_STORAGE_FEE,
 			data: {
 				donate: 1,
 				repo: 'alice/aliceproject'
@@ -65,6 +78,7 @@ describe('Obyte Cascading Donations Bot Test Case 10 Multiple donations(base)', 
 		expect(unit).to.be.validUnit
 		expect(error).to.be.null
 		await this.network.witnessUntilStable(unit)
+		this.expenses.bob += await calculateCommission(this.network, unit) + DONATION_STORAGE_FEE
 
 		const { response } = await this.network.getAaResponseToUnit(unit)
 
@@ -76,7 +90,7 @@ describe('Obyte Cascading Donations Bot Test Case 10 Multiple donations(base)', 
 	it('10.2.1 Alice sets up project rules', async () => {
 		const { unit, error } = await this.network.wallet.alice.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				set_rules: 1,
 				repo: 'alice/aliceproject',
@@ -91,6 +105,7 @@ describe('Obyte Cascading Donations Bot Test Case 10 Multiple donations(base)', 
 		expect(unit).to.be.validUnit
 		expect(error).to.be.null
 		await this.network.witnessUntilStable(unit)
+		this.expenses.alice += await calculateCommission(this.network, unit) + BOUNCE_FEE
 
 		const { response } = await this.network.getAaResponseToUnit(unit)
 
@@ -108,7 +123,7 @@ describe('Obyte Cascading Donations Bot Test Case 10 Multiple donations(base)', 
 	it('10.3.1 Trigger aliceproject distribution', async () => {
 		const { unit, error } = await this.network.wallet.alice.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				distribute: 1,
 				repo: 'alice/aliceproject'
@@ -118,6 +133,7 @@ describe('Obyte Cascading Donations Bot Test Case 10 Multiple donations(base)', 
 		expect(unit).to.be.validUnit
 		expect(error).to.be.null
 		await this.network.witnessUntilStable(unit)
+		this.expenses.alice += await calculateCommission(this.network, unit) + BOUNCE_FEE
 
 		const { response } = await this.network.getAaResponseToUnit(unit)
 
@@ -128,7 +144,7 @@ describe('Obyte Cascading Donations Bot Test Case 10 Multiple donations(base)', 
 	it('10.4.1 Eva donates to Alice in base asset', async () => {
 		const { unit, error } = await this.network.wallet.eva.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 10e9 + 1000,
+			amount: 10e9 + DONATION_STORAGE_FEE,
 			data: {
 				donate: 1,
 				repo: 'alice/aliceproject'
@@ -138,6 +154,7 @@ describe('Obyte Cascading Donations Bot Test Case 10 Multiple donations(base)', 
 		expect(unit).to.be.validUnit
 		expect(error).to.be.null
 		await this.network.witnessUntilStable(unit)
+		this.expenses.eva += await calculateCommission(this.network, unit) + DONATION_STORAGE_FEE
 
 		const { response } = await this.network.getAaResponseToUnit(unit)
 
@@ -149,7 +166,7 @@ describe('Obyte Cascading Donations Bot Test Case 10 Multiple donations(base)', 
 	it('10.5.1 Charlie donates to Alice in base asset', async () => {
 		const { unit, error } = await this.network.wallet.charlie.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 5e9 + 1000,
+			amount: 5e9 + DONATION_STORAGE_FEE,
 			data: {
 				donate: 1,
 				repo: 'alice/aliceproject'
@@ -159,6 +176,7 @@ describe('Obyte Cascading Donations Bot Test Case 10 Multiple donations(base)', 
 		expect(unit).to.be.validUnit
 		expect(error).to.be.null
 		await this.network.witnessUntilStable(unit)
+		this.expenses.charlie += await calculateCommission(this.network, unit) + DONATION_STORAGE_FEE
 
 		const { response } = await this.network.getAaResponseToUnit(unit)
 
@@ -170,7 +188,7 @@ describe('Obyte Cascading Donations Bot Test Case 10 Multiple donations(base)', 
 	it('10.6.1 Trigger aliceproject distribution', async () => {
 		const { unit, error } = await this.network.wallet.alice.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				distribute: 1,
 				repo: 'alice/aliceproject'
@@ -180,6 +198,7 @@ describe('Obyte Cascading Donations Bot Test Case 10 Multiple donations(base)', 
 		expect(unit).to.be.validUnit
 		expect(error).to.be.null
 		await this.network.witnessUntilStable(unit)
+		this.expenses.alice += await calculateCommission(this.network, unit) + BOUNCE_FEE
 
 		const { response } = await this.network.getAaResponseToUnit(unit)
 
@@ -190,7 +209,7 @@ describe('Obyte Cascading Donations Bot Test Case 10 Multiple donations(base)', 
 	it('10.7.1 Bob donates to Alice in base asset', async () => {
 		const { unit, error } = await this.network.wallet.bob.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 8e9 + 1000,
+			amount: 8e9 + DONATION_STORAGE_FEE,
 			data: {
 				donate: 1,
 				repo: 'alice/aliceproject'
@@ -200,6 +219,7 @@ describe('Obyte Cascading Donations Bot Test Case 10 Multiple donations(base)', 
 		expect(unit).to.be.validUnit
 		expect(error).to.be.null
 		await this.network.witnessUntilStable(unit)
+		this.expenses.bob += await calculateCommission(this.network, unit) + DONATION_STORAGE_FEE
 
 		const { response } = await this.network.getAaResponseToUnit(unit)
 
@@ -211,7 +231,7 @@ describe('Obyte Cascading Donations Bot Test Case 10 Multiple donations(base)', 
 	it('10.8.1 Eva donates to Alice in base asset', async () => {
 		const { unit, error } = await this.network.wallet.eva.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 3e9 + 1000,
+			amount: 3e9 + DONATION_STORAGE_FEE,
 			data: {
 				donate: 1,
 				repo: 'alice/aliceproject'
@@ -221,6 +241,7 @@ describe('Obyte Cascading Donations Bot Test Case 10 Multiple donations(base)', 
 		expect(unit).to.be.validUnit
 		expect(error).to.be.null
 		await this.network.witnessUntilStable(unit)
+		this.expenses.eva += await calculateCommission(this.network, unit) + DONATION_STORAGE_FEE
 
 		const { response } = await this.network.getAaResponseToUnit(unit)
 
@@ -232,7 +253,7 @@ describe('Obyte Cascading Donations Bot Test Case 10 Multiple donations(base)', 
 	it('10.9.1 Charlie donates to Alice in base asset', async () => {
 		const { unit, error } = await this.network.wallet.charlie.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 9e9 + 1000,
+			amount: 9e9 + DONATION_STORAGE_FEE,
 			data: {
 				donate: 1,
 				repo: 'alice/aliceproject'
@@ -242,6 +263,7 @@ describe('Obyte Cascading Donations Bot Test Case 10 Multiple donations(base)', 
 		expect(unit).to.be.validUnit
 		expect(error).to.be.null
 		await this.network.witnessUntilStable(unit)
+		this.expenses.charlie += await calculateCommission(this.network, unit) + DONATION_STORAGE_FEE
 
 		const { response } = await this.network.getAaResponseToUnit(unit)
 
@@ -253,7 +275,7 @@ describe('Obyte Cascading Donations Bot Test Case 10 Multiple donations(base)', 
 	it('10.10.1 Trigger aliceproject distribution', async () => {
 		const { unit, error } = await this.network.wallet.alice.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				distribute: 1,
 				repo: 'alice/aliceproject'
@@ -263,6 +285,7 @@ describe('Obyte Cascading Donations Bot Test Case 10 Multiple donations(base)', 
 		expect(unit).to.be.validUnit
 		expect(error).to.be.null
 		await this.network.witnessUntilStable(unit)
+		this.expenses.alice += await calculateCommission(this.network, unit) + BOUNCE_FEE
 
 		const { response } = await this.network.getAaResponseToUnit(unit)
 
@@ -274,7 +297,7 @@ describe('Obyte Cascading Donations Bot Test Case 10 Multiple donations(base)', 
 		const balance = await this.network.wallet.alice.getBalance()
 
 		expect(balance.base.pending).to.be.equal(0)
-		expect(balance.base.stable).to.be.equal(17820958119)
+		expect(balance.base.stable).to.be.equal(17.82e9 - this.expenses.alice + DEFAULT_EXPENDABLE)
 	}).timeout(60000)
 
 	it('10.12.1 Check aliceproject state vars', async () => {
@@ -283,22 +306,22 @@ describe('Obyte Cascading Donations Bot Test Case 10 Multiple donations(base)', 
 
 		expect(vars['alice/aliceproject_pool_base']).to.be.equal(0)
 
-		expect(vars['alice/aliceproject_to_repo/1_base']).to.be.equal(1800000000)
-		expect(vars['alice/aliceproject_to_repo/2_base']).to.be.equal(4500000000)
-		expect(vars['alice/aliceproject_to_repo/3_base']).to.be.equal(11880000000)
+		expect(vars['alice/aliceproject_to_repo/1_base']).to.be.equal(1.8e9)
+		expect(vars['alice/aliceproject_to_repo/2_base']).to.be.equal(4.5e9)
+		expect(vars['alice/aliceproject_to_repo/3_base']).to.be.equal(11.88e9)
 
-		expect(vars['alice/aliceproject_total_received_base']).to.be.equal(36000000000)
+		expect(vars['alice/aliceproject_total_received_base']).to.be.equal(36e9)
 
-		expect(vars[`paid_to_${aliceAddress}_base`]).to.be.equal(17820000000)
+		expect(vars[`paid_to_${aliceAddress}_base`]).to.be.equal(17.82e9)
 
-		expect(vars['repo/1_pool_base']).to.be.equal(1800000000)
-		expect(vars['repo/1_total_received_base']).to.be.equal(1800000000)
+		expect(vars['repo/1_pool_base']).to.be.equal(1.8e9)
+		expect(vars['repo/1_total_received_base']).to.be.equal(1.8e9)
 
-		expect(vars['repo/2_pool_base']).to.be.equal(4500000000)
-		expect(vars['repo/2_total_received_base']).to.be.equal(4500000000)
+		expect(vars['repo/2_pool_base']).to.be.equal(4.5e9)
+		expect(vars['repo/2_total_received_base']).to.be.equal(4.5e9)
 
-		expect(vars['repo/3_pool_base']).to.be.equal(11880000000)
-		expect(vars['repo/3_total_received_base']).to.be.equal(11880000000)
+		expect(vars['repo/3_pool_base']).to.be.equal(11.88e9)
+		expect(vars['repo/3_total_received_base']).to.be.equal(11.88e9)
 	}).timeout(60000)
 
 	after(async () => {

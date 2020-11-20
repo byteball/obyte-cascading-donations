@@ -10,7 +10,7 @@
 
 const path = require('path')
 const AA_PATH = '../agent.aa'
-const { ATTESTOR_MNEMONIC } = require('./constants')
+const { ATTESTOR_MNEMONIC, DEFAULT_EXPENDABLE, BOUNCE_FEE } = require('./constants')
 
 describe('Obyte Cascading Donations Bot Test Case 8 Nested donations 1 level(custom asset)', function () {
 	this.timeout(120000)
@@ -20,10 +20,10 @@ describe('Obyte Cascading Donations Bot Test Case 8 Nested donations 1 level(cus
 			.with.asset({ myasset: {} })
 			.with.agent({ cascadingDonations: path.join(__dirname, AA_PATH) })
 			.with.wallet({ attestor: 100e9 }, ATTESTOR_MNEMONIC)
-			.with.wallet({ alice: 1e6 })
-			.with.wallet({ bob: 1e6 })
-			.with.wallet({ eva: 1e6 })
-			.with.wallet({ charlie: { base: 1e6, myasset: 100e9 } })
+			.with.wallet({ alice: DEFAULT_EXPENDABLE })
+			.with.wallet({ bob: DEFAULT_EXPENDABLE })
+			.with.wallet({ eva: DEFAULT_EXPENDABLE })
+			.with.wallet({ charlie: { base: DEFAULT_EXPENDABLE, myasset: 100e9 } })
 			.run()
 	})
 
@@ -93,7 +93,7 @@ describe('Obyte Cascading Donations Bot Test Case 8 Nested donations 1 level(cus
 	it('8.1.1 Set up rules for aliceproject', async () => {
 		const { unit, error } = await this.network.wallet.alice.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				set_rules: 1,
 				repo: 'alice/aliceproject',
@@ -116,7 +116,7 @@ describe('Obyte Cascading Donations Bot Test Case 8 Nested donations 1 level(cus
 	it('8.2.1 Set up rules for bobproject', async () => {
 		const { unit, error } = await this.network.wallet.bob.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				set_rules: 1,
 				repo: 'bob/bobproject'
@@ -137,7 +137,7 @@ describe('Obyte Cascading Donations Bot Test Case 8 Nested donations 1 level(cus
 			base_outputs: [
 				{
 					address: this.network.agent.cascadingDonations,
-					amount: 1e4
+					amount: BOUNCE_FEE
 				}
 			],
 			asset_outputs: [
@@ -177,7 +177,7 @@ describe('Obyte Cascading Donations Bot Test Case 8 Nested donations 1 level(cus
 	it('8.4.1 Trigger distribution for aliceproject(myasset)', async () => {
 		const { unit, error } = await this.network.wallet.alice.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				distribute: 1,
 				repo: 'alice/aliceproject',
@@ -227,7 +227,7 @@ describe('Obyte Cascading Donations Bot Test Case 8 Nested donations 1 level(cus
 	it('8.5.1 Trigger distribution for bobproject(myasset)', async () => {
 		const { unit, error } = await this.network.wallet.bob.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				distribute: 1,
 				repo: 'bob/bobproject',
@@ -280,7 +280,7 @@ describe('Obyte Cascading Donations Bot Test Case 8 Nested donations 1 level(cus
 	it('8.6.1 Set up rules for evaproject', async () => {
 		const { unit, error } = await this.network.wallet.eva.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				set_rules: 1,
 				repo: 'eva/evaproject'
@@ -299,7 +299,7 @@ describe('Obyte Cascading Donations Bot Test Case 8 Nested donations 1 level(cus
 	it('8.7.1 Trigger distribution for evaproject(myasset)', async () => {
 		const { unit, error } = await this.network.wallet.eva.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				distribute: 1,
 				repo: 'eva/evaproject',

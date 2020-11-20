@@ -8,7 +8,7 @@
 const path = require('path')
 const AA_PATH = '../agent.aa'
 const TRIGGERER_PATH = './triggerer.aa'
-const { ATTESTOR_MNEMONIC } = require('./constants')
+const { ATTESTOR_MNEMONIC, DEFAULT_EXPENDABLE, BOUNCE_FEE } = require('./constants')
 
 describe('Obyte Cascading Donations Bot Test Case 19 external AA bounces', function () {
 	this.timeout(120000)
@@ -18,7 +18,7 @@ describe('Obyte Cascading Donations Bot Test Case 19 external AA bounces', funct
 			.with.agent({ cascadingDonations: path.join(__dirname, AA_PATH) })
 			.with.agent({ triggerer: path.join(__dirname, TRIGGERER_PATH) })
 			.with.wallet({ attestor: 100e9 }, ATTESTOR_MNEMONIC)
-			.with.wallet({ alice: 1e6 })
+			.with.wallet({ alice: DEFAULT_EXPENDABLE })
 			.run()
 	})
 
@@ -90,7 +90,7 @@ describe('Obyte Cascading Donations Bot Test Case 19 external AA bounces', funct
 	it('19.3.2 Alice sets up aliceproject rules', async () => {
 		const { unit, error } = await this.network.wallet.alice.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
-			amount: 1e4,
+			amount: BOUNCE_FEE,
 			data: {
 				set_rules: 1,
 				repo: 'owner/repo'
