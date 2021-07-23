@@ -42,8 +42,8 @@ describe('Obyte Cascading Donations Bot Test Case 6 attempt to set rules without
 		expect(response.response.error).to.be.equal(`Address ${aliceAddress} has no attestation for alice`)
 
 		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars['alice/myproject_owner']).to.be.undefined
-		expect(vars['alice/myproject_rules']).to.be.undefined
+		expect(vars['alice/myproject*owner']).to.be.undefined
+		expect(vars['alice/myproject*rules']).to.be.undefined
 	}).timeout(60000)
 
 	it('6.2.1 Alice receives attestation for a project', async () => {
@@ -89,7 +89,7 @@ describe('Obyte Cascading Donations Bot Test Case 6 attempt to set rules without
 		expect(response.response.responseVars.message).to.be.equal('Rules for alice/myproject are set')
 
 		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars['alice/myproject_rules']).to.be.deep.equal({
+		expect(vars['alice/myproject*rules']).to.be.deep.equal({
 			'repo/1': 25
 		})
 	}).timeout(60000)

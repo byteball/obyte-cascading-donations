@@ -116,7 +116,7 @@ describe('Obyte Cascading Donations Bot Test Case 11 Multiple donations(custom a
 		expect(response.response.responseVars.message).to.be.equal('Rules for alice/aliceproject are set')
 
 		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars['alice/aliceproject_rules']).to.be.deep.equal({
+		expect(vars['alice/aliceproject*rules']).to.be.deep.equal({
 			'repo/1': 3,
 			'repo/2': 7.75,
 			'repo/3': 23.3
@@ -387,24 +387,24 @@ describe('Obyte Cascading Donations Bot Test Case 11 Multiple donations(custom a
 		const { vars } = await this.network.wallet.bob.readAAStateVars(this.network.agent.cascadingDonations)
 		const aliceAddress = await this.network.wallet.alice.getAddress()
 
-		expect(vars[`alice/aliceproject_pool_${this.network.asset.myasset}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject*pool*${this.network.asset.myasset}`]).to.be.equal(0)
 
-		expect(vars[`alice/aliceproject_to_repo/1_${this.network.asset.myasset}`]).to.be.equal(1.08e9)
-		expect(vars[`alice/aliceproject_to_repo/2_${this.network.asset.myasset}`]).to.be.equal(2.79e9)
-		expect(vars[`alice/aliceproject_to_repo/3_${this.network.asset.myasset}`]).to.be.equal(8.388e9)
+		expect(vars[`alice/aliceproject*to*repo/1*${this.network.asset.myasset}`]).to.be.equal(1.08e9)
+		expect(vars[`alice/aliceproject*to*repo/2*${this.network.asset.myasset}`]).to.be.equal(2.79e9)
+		expect(vars[`alice/aliceproject*to*repo/3*${this.network.asset.myasset}`]).to.be.equal(8.388e9)
 
-		expect(vars[`alice/aliceproject_total_received_${this.network.asset.myasset}`]).to.be.equal(36e9)
+		expect(vars[`alice/aliceproject*total_received*${this.network.asset.myasset}`]).to.be.equal(36e9)
 
-		expect(vars[`paid_to_${aliceAddress}_${this.network.asset.myasset}`]).to.be.equal(23.742e9)
+		expect(vars[`paid_to*${aliceAddress}*${this.network.asset.myasset}`]).to.be.equal(23.742e9)
 
-		expect(vars[`repo/1_pool_${this.network.asset.myasset}`]).to.be.equal(1.08e9)
-		expect(vars[`repo/1_total_received_${this.network.asset.myasset}`]).to.be.equal(1.08e9)
+		expect(vars[`repo/1*pool*${this.network.asset.myasset}`]).to.be.equal(1.08e9)
+		expect(vars[`repo/1*total_received*${this.network.asset.myasset}`]).to.be.equal(1.08e9)
 
-		expect(vars[`repo/2_pool_${this.network.asset.myasset}`]).to.be.equal(2.79e9)
-		expect(vars[`repo/2_total_received_${this.network.asset.myasset}`]).to.be.equal(2.79e9)
+		expect(vars[`repo/2*pool*${this.network.asset.myasset}`]).to.be.equal(2.79e9)
+		expect(vars[`repo/2*total_received*${this.network.asset.myasset}`]).to.be.equal(2.79e9)
 
-		expect(vars[`repo/3_pool_${this.network.asset.myasset}`]).to.be.equal(8.388e9)
-		expect(vars[`repo/3_total_received_${this.network.asset.myasset}`]).to.be.equal(8.388e9)
+		expect(vars[`repo/3*pool*${this.network.asset.myasset}`]).to.be.equal(8.388e9)
+		expect(vars[`repo/3*total_received*${this.network.asset.myasset}`]).to.be.equal(8.388e9)
 	}).timeout(60000)
 
 	after(async () => {
