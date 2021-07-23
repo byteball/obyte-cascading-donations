@@ -163,9 +163,9 @@ describe('Obyte Cascading Donations Bot Test Case 7 Nested donations 1 level(bas
 		expect(response.response.responseVars.donated_in_base).to.be.equal(100e9)
 
 		const { vars } = await this.network.wallet.bob.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars['alice/aliceproject_pool_base']).to.be.equal(100e9)
-		expect(vars['alice/aliceproject_total_received_base']).to.be.equal(100e9)
-		expect(vars['alice/aliceproject_unclaimed_base']).to.be.undefined
+		expect(vars['alice/aliceproject*pool*base']).to.be.equal(100e9)
+		expect(vars['alice/aliceproject*total_received*base']).to.be.equal(100e9)
+		expect(vars['alice/aliceproject*unclaimed*base']).to.be.undefined
 	}).timeout(60000)
 
 	it('7.4.1 Trigger distribution for aliceproject(base)', async () => {
@@ -195,21 +195,21 @@ describe('Obyte Cascading Donations Bot Test Case 7 Nested donations 1 level(bas
 
 		const aliceAddress = await this.network.wallet.alice.getAddress()
 
-		expect(vars[`paid_to_${aliceAddress}_base`]).to.be.equal(50e9)
-		expect(vars['alice/aliceproject_pool_base']).to.be.equal(0)
-		expect(vars['alice/aliceproject_total_received_base']).to.be.equal(100e9)
+		expect(vars[`paid_to*${aliceAddress}*base`]).to.be.equal(50e9)
+		expect(vars['alice/aliceproject*pool*base']).to.be.equal(0)
+		expect(vars['alice/aliceproject*total_received*base']).to.be.equal(100e9)
 
-		expect(vars['bob/bobproject_pool_base']).to.be.equal(30e9)
-		expect(vars['bob/bobproject_total_received_base']).to.be.equal(30e9)
-		expect(vars['alice/aliceproject_to_bob/bobproject_base']).to.be.equal(30e9)
+		expect(vars['bob/bobproject*pool*base']).to.be.equal(30e9)
+		expect(vars['bob/bobproject*total_received*base']).to.be.equal(30e9)
+		expect(vars['alice/aliceproject*to*bob/bobproject*base']).to.be.equal(30e9)
 
-		expect(vars['eva/evaproject_pool_base']).to.be.equal(20e9)
-		expect(vars['eva/evaproject_total_received_base']).to.be.equal(20e9)
-		expect(vars['alice/aliceproject_to_eva/evaproject_base']).to.be.equal(20e9)
+		expect(vars['eva/evaproject*pool*base']).to.be.equal(20e9)
+		expect(vars['eva/evaproject*total_received*base']).to.be.equal(20e9)
+		expect(vars['alice/aliceproject*to*eva/evaproject*base']).to.be.equal(20e9)
 
-		expect(vars['alice/aliceproject_unclaimed_base']).to.be.equal(0)
-		expect(vars['bob/bobproject_unclaimed_base']).to.be.undefined
-		expect(vars['eva/evaproject_unclaimed_base']).to.be.undefined
+		expect(vars['alice/aliceproject*unclaimed*base']).to.be.equal(0)
+		expect(vars['bob/bobproject*unclaimed*base']).to.be.undefined
+		expect(vars['eva/evaproject*unclaimed*base']).to.be.undefined
 
 		await this.network.witnessUntilStable(response.response_unit)
 
@@ -246,23 +246,23 @@ describe('Obyte Cascading Donations Bot Test Case 7 Nested donations 1 level(bas
 		const bobAddress = await this.network.wallet.bob.getAddress()
 		const aliceAddress = await this.network.wallet.alice.getAddress()
 
-		expect(vars[`paid_to_${aliceAddress}_base`]).to.be.equal(50e9)
-		expect(vars[`paid_to_${bobAddress}_base`]).to.be.equal(30e9)
+		expect(vars[`paid_to*${aliceAddress}*base`]).to.be.equal(50e9)
+		expect(vars[`paid_to*${bobAddress}*base`]).to.be.equal(30e9)
 
-		expect(vars['alice/aliceproject_pool_base']).to.be.equal(0)
-		expect(vars['alice/aliceproject_total_received_base']).to.be.equal(100e9)
+		expect(vars['alice/aliceproject*pool*base']).to.be.equal(0)
+		expect(vars['alice/aliceproject*total_received*base']).to.be.equal(100e9)
 
-		expect(vars['bob/bobproject_pool_base']).to.be.equal(0)
-		expect(vars['bob/bobproject_total_received_base']).to.be.equal(30e9)
-		expect(vars['alice/aliceproject_to_bob/bobproject_base']).to.be.equal(30e9)
+		expect(vars['bob/bobproject*pool*base']).to.be.equal(0)
+		expect(vars['bob/bobproject*total_received*base']).to.be.equal(30e9)
+		expect(vars['alice/aliceproject*to*bob/bobproject*base']).to.be.equal(30e9)
 
-		expect(vars['eva/evaproject_pool_base']).to.be.equal(20e9)
-		expect(vars['eva/evaproject_total_received_base']).to.be.equal(20e9)
-		expect(vars['alice/aliceproject_to_eva/evaproject_base']).to.be.equal(20e9)
+		expect(vars['eva/evaproject*pool*base']).to.be.equal(20e9)
+		expect(vars['eva/evaproject*total_received*base']).to.be.equal(20e9)
+		expect(vars['alice/aliceproject*to*eva/evaproject*base']).to.be.equal(20e9)
 
-		expect(vars['alice/aliceproject_unclaimed_base']).to.be.equal(0)
-		expect(vars['bob/bobproject_unclaimed_base']).to.be.equal(0)
-		expect(vars['eva/evaproject_unclaimed_base']).to.be.undefined
+		expect(vars['alice/aliceproject*unclaimed*base']).to.be.equal(0)
+		expect(vars['bob/bobproject*unclaimed*base']).to.be.equal(0)
+		expect(vars['eva/evaproject*unclaimed*base']).to.be.undefined
 
 		await this.network.witnessUntilStable(response.response_unit)
 
@@ -320,24 +320,24 @@ describe('Obyte Cascading Donations Bot Test Case 7 Nested donations 1 level(bas
 		const aliceAddress = await this.network.wallet.alice.getAddress()
 		const evaAddress = await this.network.wallet.eva.getAddress()
 
-		expect(vars[`paid_to_${aliceAddress}_base`]).to.be.equal(50e9)
-		expect(vars[`paid_to_${bobAddress}_base`]).to.be.equal(30e9)
-		expect(vars[`paid_to_${evaAddress}_base`]).to.be.equal(20e9)
+		expect(vars[`paid_to*${aliceAddress}*base`]).to.be.equal(50e9)
+		expect(vars[`paid_to*${bobAddress}*base`]).to.be.equal(30e9)
+		expect(vars[`paid_to*${evaAddress}*base`]).to.be.equal(20e9)
 
-		expect(vars['alice/aliceproject_pool_base']).to.be.equal(0)
-		expect(vars['alice/aliceproject_total_received_base']).to.be.equal(100e9)
+		expect(vars['alice/aliceproject*pool*base']).to.be.equal(0)
+		expect(vars['alice/aliceproject*total_received*base']).to.be.equal(100e9)
 
-		expect(vars['bob/bobproject_pool_base']).to.be.equal(0)
-		expect(vars['bob/bobproject_total_received_base']).to.be.equal(30e9)
-		expect(vars['alice/aliceproject_to_bob/bobproject_base']).to.be.equal(30e9)
+		expect(vars['bob/bobproject*pool*base']).to.be.equal(0)
+		expect(vars['bob/bobproject*total_received*base']).to.be.equal(30e9)
+		expect(vars['alice/aliceproject*to*bob/bobproject*base']).to.be.equal(30e9)
 
-		expect(vars['eva/evaproject_pool_base']).to.be.equal(0)
-		expect(vars['eva/evaproject_total_received_base']).to.be.equal(20e9)
-		expect(vars['alice/aliceproject_to_eva/evaproject_base']).to.be.equal(20e9)
+		expect(vars['eva/evaproject*pool*base']).to.be.equal(0)
+		expect(vars['eva/evaproject*total_received*base']).to.be.equal(20e9)
+		expect(vars['alice/aliceproject*to*eva/evaproject*base']).to.be.equal(20e9)
 
-		expect(vars['alice/aliceproject_unclaimed_base']).to.be.equal(0)
-		expect(vars['bob/bobproject_unclaimed_base']).to.be.equal(0)
-		expect(vars['eva/evaproject_unclaimed_base']).to.be.equal(0)
+		expect(vars['alice/aliceproject*unclaimed*base']).to.be.equal(0)
+		expect(vars['bob/bobproject*unclaimed*base']).to.be.equal(0)
+		expect(vars['eva/evaproject*unclaimed*base']).to.be.equal(0)
 
 		await this.network.witnessUntilStable(response.response_unit)
 

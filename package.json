@@ -13,7 +13,7 @@
   "dependencies": {
     "chai": "^4.2.0",
     "mocha": "^6.2.0",
-    "aa-testkit": "file:../aa-testkit"
+    "aa-testkit": "valyakin/aa-testkit"
   },
   "devDependencies": {
     "eslint": "^6.3.0",

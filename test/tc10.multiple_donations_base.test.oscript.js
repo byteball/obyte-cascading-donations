@@ -113,7 +113,7 @@ describe('Obyte Cascading Donations Bot Test Case 10 Multiple donations(base)', 
 		expect(response.response.responseVars.message).to.be.equal('Rules for alice/aliceproject are set')
 
 		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars['alice/aliceproject_rules']).to.be.deep.equal({
+		expect(vars['alice/aliceproject*rules']).to.be.deep.equal({
 			'repo/1': 5,
 			'repo/2': 12.5,
 			'repo/3': 33
@@ -304,24 +304,24 @@ describe('Obyte Cascading Donations Bot Test Case 10 Multiple donations(base)', 
 		const { vars } = await this.network.wallet.bob.readAAStateVars(this.network.agent.cascadingDonations)
 		const aliceAddress = await this.network.wallet.alice.getAddress()
 
-		expect(vars['alice/aliceproject_pool_base']).to.be.equal(0)
+		expect(vars['alice/aliceproject*pool*base']).to.be.equal(0)
 
-		expect(vars['alice/aliceproject_to_repo/1_base']).to.be.equal(1.8e9)
-		expect(vars['alice/aliceproject_to_repo/2_base']).to.be.equal(4.5e9)
-		expect(vars['alice/aliceproject_to_repo/3_base']).to.be.equal(11.88e9)
+		expect(vars['alice/aliceproject*to*repo/1*base']).to.be.equal(1.8e9)
+		expect(vars['alice/aliceproject*to*repo/2*base']).to.be.equal(4.5e9)
+		expect(vars['alice/aliceproject*to*repo/3*base']).to.be.equal(11.88e9)
 
-		expect(vars['alice/aliceproject_total_received_base']).to.be.equal(36e9)
+		expect(vars['alice/aliceproject*total_received*base']).to.be.equal(36e9)
 
-		expect(vars[`paid_to_${aliceAddress}_base`]).to.be.equal(17.82e9)
+		expect(vars[`paid_to*${aliceAddress}*base`]).to.be.equal(17.82e9)
 
-		expect(vars['repo/1_pool_base']).to.be.equal(1.8e9)
-		expect(vars['repo/1_total_received_base']).to.be.equal(1.8e9)
+		expect(vars['repo/1*pool*base']).to.be.equal(1.8e9)
+		expect(vars['repo/1*total_received*base']).to.be.equal(1.8e9)
 
-		expect(vars['repo/2_pool_base']).to.be.equal(4.5e9)
-		expect(vars['repo/2_total_received_base']).to.be.equal(4.5e9)
+		expect(vars['repo/2*pool*base']).to.be.equal(4.5e9)
+		expect(vars['repo/2*total_received*base']).to.be.equal(4.5e9)
 
-		expect(vars['repo/3_pool_base']).to.be.equal(11.88e9)
-		expect(vars['repo/3_total_received_base']).to.be.equal(11.88e9)
+		expect(vars['repo/3*pool*base']).to.be.equal(11.88e9)
+		expect(vars['repo/3*total_received*base']).to.be.equal(11.88e9)
 	}).timeout(60000)
 
 	after(async () => {

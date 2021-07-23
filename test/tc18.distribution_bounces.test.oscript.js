@@ -99,7 +99,7 @@ describe('Obyte Cascading Donations Bot Test Case 18 distribution bounces', func
 		expect(response.response.responseVars.message).to.be.equal('Rules for alice/aliceproject are set')
 
 		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars['alice/aliceproject_rules']).to.be.deep.equal({})
+		expect(vars['alice/aliceproject*rules']).to.be.deep.equal({})
 		this.expenses.aa += await calculateAAResponseCommission(this.network, unit)
 	}).timeout(60000)
 
@@ -129,11 +129,11 @@ describe('Obyte Cascading Donations Bot Test Case 18 distribution bounces', func
 		const bobAddress = await this.network.wallet.alice.getAddress()
 
 		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset}`]).to.be.undefined
-		expect(vars[`alice/aliceproject_pool_${this.network.asset.myasset}`]).to.be.undefined
-		expect(vars[`alice/aliceproject_total_received_${this.network.asset.myasset}`]).to.be.undefined
-		expect(vars[`paid_to_${aliceAddress}_${this.network.asset.myasset}`]).to.be.undefined
-		expect(vars[`paid_to_${bobAddress}_${this.network.asset.myasset}`]).to.be.undefined
+		expect(vars[`alice/aliceproject*unclaimed*${this.network.asset.myasset}`]).to.be.undefined
+		expect(vars[`alice/aliceproject*pool*${this.network.asset.myasset}`]).to.be.undefined
+		expect(vars[`alice/aliceproject*total_received*${this.network.asset.myasset}`]).to.be.undefined
+		expect(vars[`paid_to*${aliceAddress}*${this.network.asset.myasset}`]).to.be.undefined
+		expect(vars[`paid_to*${bobAddress}*${this.network.asset.myasset}`]).to.be.undefined
 
 		this.expenses.aa += await calculateAAResponseCommission(this.network, unit)
 	}).timeout(60000)
@@ -164,11 +164,11 @@ describe('Obyte Cascading Donations Bot Test Case 18 distribution bounces', func
 		const bobAddress = await this.network.wallet.alice.getAddress()
 
 		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset}`]).to.be.undefined
-		expect(vars[`alice/aliceproject_pool_${this.network.asset.myasset}`]).to.be.undefined
-		expect(vars[`alice/aliceproject_total_received_${this.network.asset.myasset}`]).to.be.undefined
-		expect(vars[`paid_to_${aliceAddress}_${this.network.asset.myasset}`]).to.be.undefined
-		expect(vars[`paid_to_${bobAddress}_${this.network.asset.myasset}`]).to.be.undefined
+		expect(vars[`alice/aliceproject*unclaimed*${this.network.asset.myasset}`]).to.be.undefined
+		expect(vars[`alice/aliceproject*pool*${this.network.asset.myasset}`]).to.be.undefined
+		expect(vars[`alice/aliceproject*total_received*${this.network.asset.myasset}`]).to.be.undefined
+		expect(vars[`paid_to*${aliceAddress}*${this.network.asset.myasset}`]).to.be.undefined
+		expect(vars[`paid_to*${bobAddress}*${this.network.asset.myasset}`]).to.be.undefined
 
 		this.expenses.aa += await calculateAAResponseCommission(this.network, unit)
 	}).timeout(60000)
@@ -248,11 +248,11 @@ describe('Obyte Cascading Donations Bot Test Case 18 distribution bounces', func
 		expect(response.response.responseVars.asset).to.be.equal(this.network.asset.myasset)
 
 		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset}`]).to.be.equal(10e9)
-		expect(vars[`alice/aliceproject_pool_${this.network.asset.myasset}`]).to.be.equal(0)
-		expect(vars[`alice/aliceproject_total_received_${this.network.asset.myasset}`]).to.be.equal(10e9)
-		expect(vars[`paid_to_${aliceAddress}_${this.network.asset.myasset}`]).to.be.undefined
-		expect(vars[`paid_to_${bobAddress}_${this.network.asset.myasset}`]).to.be.undefined
+		expect(vars[`alice/aliceproject*unclaimed*${this.network.asset.myasset}`]).to.be.equal(10e9)
+		expect(vars[`alice/aliceproject*pool*${this.network.asset.myasset}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject*total_received*${this.network.asset.myasset}`]).to.be.equal(10e9)
+		expect(vars[`paid_to*${aliceAddress}*${this.network.asset.myasset}`]).to.be.undefined
+		expect(vars[`paid_to*${bobAddress}*${this.network.asset.myasset}`]).to.be.undefined
 
 		this.expenses.aa += await calculateAAResponseCommission(this.network, unit)
 		const aaBalance = await this.network.wallet.alice.getBalanceOf(this.network.agent.cascadingDonations)
@@ -285,11 +285,11 @@ describe('Obyte Cascading Donations Bot Test Case 18 distribution bounces', func
 		const bobAddress = await this.network.wallet.alice.getAddress()
 
 		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset}`]).to.be.equal(10e9)
-		expect(vars[`alice/aliceproject_pool_${this.network.asset.myasset}`]).to.be.equal(0)
-		expect(vars[`alice/aliceproject_total_received_${this.network.asset.myasset}`]).to.be.equal(10e9)
-		expect(vars[`paid_to_${aliceAddress}_${this.network.asset.myasset}`]).to.be.undefined
-		expect(vars[`paid_to_${bobAddress}_${this.network.asset.myasset}`]).to.be.undefined
+		expect(vars[`alice/aliceproject*unclaimed*${this.network.asset.myasset}`]).to.be.equal(10e9)
+		expect(vars[`alice/aliceproject*pool*${this.network.asset.myasset}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject*total_received*${this.network.asset.myasset}`]).to.be.equal(10e9)
+		expect(vars[`paid_to*${aliceAddress}*${this.network.asset.myasset}`]).to.be.undefined
+		expect(vars[`paid_to*${bobAddress}*${this.network.asset.myasset}`]).to.be.undefined
 
 		this.expenses.aa += await calculateAAResponseCommission(this.network, unit)
 		const aaBalance = await this.network.wallet.alice.getBalanceOf(this.network.agent.cascadingDonations)
@@ -326,11 +326,11 @@ describe('Obyte Cascading Donations Bot Test Case 18 distribution bounces', func
 		expect(response.response.responseVars.asset).to.be.equal(this.network.asset.myasset)
 
 		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset}`]).to.be.equal(0)
-		expect(vars[`alice/aliceproject_pool_${this.network.asset.myasset}`]).to.be.equal(0)
-		expect(vars[`alice/aliceproject_total_received_${this.network.asset.myasset}`]).to.be.equal(10e9)
-		expect(vars[`paid_to_${aliceAddress}_${this.network.asset.myasset}`]).to.be.equal(10e9)
-		expect(vars[`paid_to_${bobAddress}_${this.network.asset.myasset}`]).to.be.undefined
+		expect(vars[`alice/aliceproject*unclaimed*${this.network.asset.myasset}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject*pool*${this.network.asset.myasset}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject*total_received*${this.network.asset.myasset}`]).to.be.equal(10e9)
+		expect(vars[`paid_to*${aliceAddress}*${this.network.asset.myasset}`]).to.be.equal(10e9)
+		expect(vars[`paid_to*${bobAddress}*${this.network.asset.myasset}`]).to.be.undefined
 
 		this.expenses.aa += await calculateAAResponseCommission(this.network, unit)
 		const aaBalance = await this.network.wallet.alice.getBalanceOf(this.network.agent.cascadingDonations)
@@ -411,11 +411,11 @@ describe('Obyte Cascading Donations Bot Test Case 18 distribution bounces', func
 		expect(response.response.responseVars.asset).to.be.equal(this.network.asset.myasset)
 
 		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset}`]).to.be.equal(0)
-		expect(vars[`alice/aliceproject_pool_${this.network.asset.myasset}`]).to.be.equal(0)
-		expect(vars[`alice/aliceproject_total_received_${this.network.asset.myasset}`]).to.be.equal(20e9)
-		expect(vars[`paid_to_${aliceAddress}_${this.network.asset.myasset}`]).to.be.equal(20e9)
-		expect(vars[`paid_to_${bobAddress}_${this.network.asset.myasset}`]).to.be.undefined
+		expect(vars[`alice/aliceproject*unclaimed*${this.network.asset.myasset}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject*pool*${this.network.asset.myasset}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject*total_received*${this.network.asset.myasset}`]).to.be.equal(20e9)
+		expect(vars[`paid_to*${aliceAddress}*${this.network.asset.myasset}`]).to.be.equal(20e9)
+		expect(vars[`paid_to*${bobAddress}*${this.network.asset.myasset}`]).to.be.undefined
 
 		this.expenses.aa += await calculateAAResponseCommission(this.network, unit)
 		const aaBalance = await this.network.wallet.alice.getBalanceOf(this.network.agent.cascadingDonations)
@@ -496,11 +496,11 @@ describe('Obyte Cascading Donations Bot Test Case 18 distribution bounces', func
 		expect(response.response.responseVars.asset).to.be.equal(this.network.asset.myasset)
 
 		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset}`]).to.be.equal(10e9)
-		expect(vars[`alice/aliceproject_pool_${this.network.asset.myasset}`]).to.be.equal(0)
-		expect(vars[`alice/aliceproject_total_received_${this.network.asset.myasset}`]).to.be.equal(30e9)
-		expect(vars[`paid_to_${aliceAddress}_${this.network.asset.myasset}`]).to.be.equal(20e9)
-		expect(vars[`paid_to_${bobAddress}_${this.network.asset.myasset}`]).to.be.undefined
+		expect(vars[`alice/aliceproject*unclaimed*${this.network.asset.myasset}`]).to.be.equal(10e9)
+		expect(vars[`alice/aliceproject*pool*${this.network.asset.myasset}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject*total_received*${this.network.asset.myasset}`]).to.be.equal(30e9)
+		expect(vars[`paid_to*${aliceAddress}*${this.network.asset.myasset}`]).to.be.equal(20e9)
+		expect(vars[`paid_to*${bobAddress}*${this.network.asset.myasset}`]).to.be.undefined
 
 		this.expenses.aa += await calculateAAResponseCommission(this.network, unit)
 		const aaBalance = await this.network.wallet.alice.getBalanceOf(this.network.agent.cascadingDonations)
@@ -581,11 +581,11 @@ describe('Obyte Cascading Donations Bot Test Case 18 distribution bounces', func
 		expect(response.response.responseVars.asset).to.be.equal(this.network.asset.myasset)
 
 		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset}`]).to.be.equal(0)
-		expect(vars[`alice/aliceproject_pool_${this.network.asset.myasset}`]).to.be.equal(0)
-		expect(vars[`alice/aliceproject_total_received_${this.network.asset.myasset}`]).to.be.equal(40e9)
-		expect(vars[`paid_to_${aliceAddress}_${this.network.asset.myasset}`]).to.be.equal(40e9)
-		expect(vars[`paid_to_${bobAddress}_${this.network.asset.myasset}`]).to.be.undefined
+		expect(vars[`alice/aliceproject*unclaimed*${this.network.asset.myasset}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject*pool*${this.network.asset.myasset}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject*total_received*${this.network.asset.myasset}`]).to.be.equal(40e9)
+		expect(vars[`paid_to*${aliceAddress}*${this.network.asset.myasset}`]).to.be.equal(40e9)
+		expect(vars[`paid_to*${bobAddress}*${this.network.asset.myasset}`]).to.be.undefined
 
 		this.expenses.aa += await calculateAAResponseCommission(this.network, unit)
 		const aaBalance = await this.network.wallet.alice.getBalanceOf(this.network.agent.cascadingDonations)
@@ -666,11 +666,11 @@ describe('Obyte Cascading Donations Bot Test Case 18 distribution bounces', func
 		expect(response.response.responseVars.asset).to.be.equal(this.network.asset.myasset)
 
 		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset}`]).to.be.equal(10e9)
-		expect(vars[`alice/aliceproject_pool_${this.network.asset.myasset}`]).to.be.equal(0)
-		expect(vars[`alice/aliceproject_total_received_${this.network.asset.myasset}`]).to.be.equal(50e9)
-		expect(vars[`paid_to_${aliceAddress}_${this.network.asset.myasset}`]).to.be.equal(40e9)
-		expect(vars[`paid_to_${bobAddress}_${this.network.asset.myasset}`]).to.be.undefined
+		expect(vars[`alice/aliceproject*unclaimed*${this.network.asset.myasset}`]).to.be.equal(10e9)
+		expect(vars[`alice/aliceproject*pool*${this.network.asset.myasset}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject*total_received*${this.network.asset.myasset}`]).to.be.equal(50e9)
+		expect(vars[`paid_to*${aliceAddress}*${this.network.asset.myasset}`]).to.be.equal(40e9)
+		expect(vars[`paid_to*${bobAddress}*${this.network.asset.myasset}`]).to.be.undefined
 
 		this.expenses.aa += await calculateAAResponseCommission(this.network, unit)
 		const aaBalance = await this.network.wallet.alice.getBalanceOf(this.network.agent.cascadingDonations)
@@ -751,11 +751,11 @@ describe('Obyte Cascading Donations Bot Test Case 18 distribution bounces', func
 		expect(response.response.responseVars.asset).to.be.equal(this.network.asset.myasset)
 
 		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset}`]).to.be.equal(20e9)
-		expect(vars[`alice/aliceproject_pool_${this.network.asset.myasset}`]).to.be.equal(0)
-		expect(vars[`alice/aliceproject_total_received_${this.network.asset.myasset}`]).to.be.equal(60e9)
-		expect(vars[`paid_to_${aliceAddress}_${this.network.asset.myasset}`]).to.be.equal(40e9)
-		expect(vars[`paid_to_${bobAddress}_${this.network.asset.myasset}`]).to.be.undefined
+		expect(vars[`alice/aliceproject*unclaimed*${this.network.asset.myasset}`]).to.be.equal(20e9)
+		expect(vars[`alice/aliceproject*pool*${this.network.asset.myasset}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject*total_received*${this.network.asset.myasset}`]).to.be.equal(60e9)
+		expect(vars[`paid_to*${aliceAddress}*${this.network.asset.myasset}`]).to.be.equal(40e9)
+		expect(vars[`paid_to*${bobAddress}*${this.network.asset.myasset}`]).to.be.undefined
 
 		this.expenses.aa += await calculateAAResponseCommission(this.network, unit)
 		const aaBalance = await this.network.wallet.alice.getBalanceOf(this.network.agent.cascadingDonations)
@@ -798,14 +798,14 @@ describe('Obyte Cascading Donations Bot Test Case 18 distribution bounces', func
 		const aliceAddress = await this.network.wallet.alice.getAddress()
 		const bobAddress = await this.network.wallet.bob.getAddress()
 
-		expect(vars[`alice/aliceproject_pool_${this.network.asset.myasset}`]).to.be.equal(0)
-		expect(vars[`alice/aliceproject_total_received_${this.network.asset.myasset}`]).to.be.equal(60e9)
+		expect(vars[`alice/aliceproject*pool*${this.network.asset.myasset}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject*total_received*${this.network.asset.myasset}`]).to.be.equal(60e9)
 
-		expect(vars[`paid_to_${aliceAddress}_${this.network.asset.myasset}`]).to.be.equal(40e9)
-		expect(vars[`paid_to_${bobAddress}_${this.network.asset.myasset}`]).to.be.undefined
+		expect(vars[`paid_to*${aliceAddress}*${this.network.asset.myasset}`]).to.be.equal(40e9)
+		expect(vars[`paid_to*${bobAddress}*${this.network.asset.myasset}`]).to.be.undefined
 
-		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset}`]).to.be.equal(20e9)
-		expect(vars[`bob/bobproject_unclaimed_${this.network.asset.myasset}`]).to.be.undefined
+		expect(vars[`alice/aliceproject*unclaimed*${this.network.asset.myasset}`]).to.be.equal(20e9)
+		expect(vars[`bob/bobproject*unclaimed*${this.network.asset.myasset}`]).to.be.undefined
 	}).timeout(60000)
 
 	after(async () => {

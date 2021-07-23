@@ -70,7 +70,7 @@ describe('Obyte Cascading Donations Bot Test Case 1 Distribute base without rule
 		expect(response.response.responseVars.message).to.be.equal('Rules for alice/myproject are set')
 
 		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars['alice/myproject_rules']).to.be.deep.equal({})
+		expect(vars['alice/myproject*rules']).to.be.deep.equal({})
 	}).timeout(60000)
 
 	it('1.2.1 Bob donates to Alice in base asset', async () => {
@@ -95,8 +95,8 @@ describe('Obyte Cascading Donations Bot Test Case 1 Distribute base without rule
 		expect(response.response.responseVars.donated_in_base).to.be.equal(1e9)
 
 		const { vars } = await this.network.wallet.bob.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars['alice/myproject_pool_base']).to.be.equal(1e9)
-		expect(vars['alice/myproject_total_received_base']).to.be.equal(1e9)
+		expect(vars['alice/myproject*pool*base']).to.be.equal(1e9)
+		expect(vars['alice/myproject*total_received*base']).to.be.equal(1e9)
 	}).timeout(60000)
 
 	it('1.3.1 Alice triggers distribution', async () => {
@@ -130,9 +130,9 @@ describe('Obyte Cascading Donations Bot Test Case 1 Distribute base without rule
 		expect(response.response.responseVars.asset).to.be.equal('base')
 
 		const { vars } = await this.network.wallet.bob.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars['alice/myproject_pool_base']).to.be.equal(0)
-		expect(vars[`paid_to_${aliceAddress}_base`]).to.be.equal(1e9)
-		expect(vars['alice/myproject_unclaimed_base']).to.be.equal(0)
+		expect(vars['alice/myproject*pool*base']).to.be.equal(0)
+		expect(vars[`paid_to*${aliceAddress}*base`]).to.be.equal(1e9)
+		expect(vars['alice/myproject*unclaimed*base']).to.be.equal(0)
 
 		await this.network.witnessUntilStable(response.response_unit)
 
@@ -163,8 +163,8 @@ describe('Obyte Cascading Donations Bot Test Case 1 Distribute base without rule
 		expect(response.response.responseVars.donated_in_base).to.be.equal(10e9)
 
 		const { vars } = await this.network.wallet.bob.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars['alice/myproject_pool_base']).to.be.equal(10e9)
-		expect(vars['alice/myproject_total_received_base']).to.be.equal(11e9)
+		expect(vars['alice/myproject*pool*base']).to.be.equal(10e9)
+		expect(vars['alice/myproject*total_received*base']).to.be.equal(11e9)
 	}).timeout(60000)
 
 	it('1.5.1 Bob triggers distribution', async () => {
@@ -198,9 +198,9 @@ describe('Obyte Cascading Donations Bot Test Case 1 Distribute base without rule
 		expect(response.response.responseVars.claimed).to.be.undefined
 
 		const { vars } = await this.network.wallet.bob.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars['alice/myproject_pool_base']).to.be.equal(0)
-		expect(vars[`paid_to_${aliceAddress}_base`]).to.be.equal(1e9)
-		expect(vars['alice/myproject_unclaimed_base']).to.be.equal(10e9)
+		expect(vars['alice/myproject*pool*base']).to.be.equal(0)
+		expect(vars[`paid_to*${aliceAddress}*base`]).to.be.equal(1e9)
+		expect(vars['alice/myproject*unclaimed*base']).to.be.equal(10e9)
 
 		await this.network.witnessUntilStable(response.response_unit)
 
@@ -244,9 +244,9 @@ describe('Obyte Cascading Donations Bot Test Case 1 Distribute base without rule
 		expect(response.response.responseVars.asset).to.be.equal('base')
 
 		const { vars } = await this.network.wallet.bob.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars['alice/myproject_pool_base']).to.be.equal(0)
-		expect(vars[`paid_to_${aliceAddress}_base`]).to.be.equal(11e9)
-		expect(vars['alice/myproject_unclaimed_base']).to.be.equal(0)
+		expect(vars['alice/myproject*pool*base']).to.be.equal(0)
+		expect(vars[`paid_to*${aliceAddress}*base`]).to.be.equal(11e9)
+		expect(vars['alice/myproject*unclaimed*base']).to.be.equal(0)
 
 		await this.network.witnessUntilStable(response.response_unit)
 

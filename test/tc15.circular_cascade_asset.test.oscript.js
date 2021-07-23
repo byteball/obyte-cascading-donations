@@ -118,7 +118,7 @@ describe('Obyte Cascading Donations Bot Test Case 15 Circular cascade(custom ass
 		expect(response.response.responseVars.message).to.be.equal('Rules for alice/aliceproject are set')
 
 		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars['alice/aliceproject_rules']).to.be.deep.equal({
+		expect(vars['alice/aliceproject*rules']).to.be.deep.equal({
 			'bob/bobproject': 50
 		})
 	}).timeout(60000)
@@ -146,7 +146,7 @@ describe('Obyte Cascading Donations Bot Test Case 15 Circular cascade(custom ass
 		expect(response.response.responseVars.message).to.be.equal('Rules for bob/bobproject are set')
 
 		const { vars } = await this.network.wallet.bob.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars['bob/bobproject_rules']).to.be.deep.equal({
+		expect(vars['bob/bobproject*rules']).to.be.deep.equal({
 			'eva/evaproject': 50
 		})
 	}).timeout(60000)
@@ -174,7 +174,7 @@ describe('Obyte Cascading Donations Bot Test Case 15 Circular cascade(custom ass
 		expect(response.response.responseVars.message).to.be.equal('Rules for eva/evaproject are set')
 
 		const { vars } = await this.network.wallet.eva.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars['eva/evaproject_rules']).to.be.deep.equal({
+		expect(vars['eva/evaproject*rules']).to.be.deep.equal({
 			'alice/aliceproject': 50
 		})
 	}).timeout(60000)
@@ -322,25 +322,25 @@ describe('Obyte Cascading Donations Bot Test Case 15 Circular cascade(custom ass
 		const bobAddress = await this.network.wallet.bob.getAddress()
 		const evaAddress = await this.network.wallet.eva.getAddress()
 
-		expect(vars[`alice/aliceproject_pool_${this.network.asset.myasset}`]).to.be.equal(12.5e9)
-		expect(vars[`bob/bobproject_pool_${this.network.asset.myasset}`]).to.be.equal(0)
-		expect(vars[`eva/evaproject_pool_${this.network.asset.myasset}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject*pool*${this.network.asset.myasset}`]).to.be.equal(12.5e9)
+		expect(vars[`bob/bobproject*pool*${this.network.asset.myasset}`]).to.be.equal(0)
+		expect(vars[`eva/evaproject*pool*${this.network.asset.myasset}`]).to.be.equal(0)
 
-		expect(vars[`alice/aliceproject_to_bob/bobproject_${this.network.asset.myasset}`]).to.be.equal(50e9)
-		expect(vars[`bob/bobproject_to_eva/evaproject_${this.network.asset.myasset}`]).to.be.equal(25e9)
-		expect(vars[`eva/evaproject_to_alice/aliceproject_${this.network.asset.myasset}`]).to.be.equal(12.5e9)
+		expect(vars[`alice/aliceproject*to*bob/bobproject*${this.network.asset.myasset}`]).to.be.equal(50e9)
+		expect(vars[`bob/bobproject*to*eva/evaproject*${this.network.asset.myasset}`]).to.be.equal(25e9)
+		expect(vars[`eva/evaproject*to*alice/aliceproject*${this.network.asset.myasset}`]).to.be.equal(12.5e9)
 
-		expect(vars[`alice/aliceproject_total_received_${this.network.asset.myasset}`]).to.be.equal(112.5e9)
-		expect(vars[`bob/bobproject_total_received_${this.network.asset.myasset}`]).to.be.equal(50e9)
-		expect(vars[`eva/evaproject_total_received_${this.network.asset.myasset}`]).to.be.equal(25e9)
+		expect(vars[`alice/aliceproject*total_received*${this.network.asset.myasset}`]).to.be.equal(112.5e9)
+		expect(vars[`bob/bobproject*total_received*${this.network.asset.myasset}`]).to.be.equal(50e9)
+		expect(vars[`eva/evaproject*total_received*${this.network.asset.myasset}`]).to.be.equal(25e9)
 
-		expect(vars[`paid_to_${aliceAddress}_${this.network.asset.myasset}`]).to.be.equal(50e9)
-		expect(vars[`paid_to_${bobAddress}_${this.network.asset.myasset}`]).to.be.equal(25e9)
-		expect(vars[`paid_to_${evaAddress}_${this.network.asset.myasset}`]).to.be.equal(12.5e9)
+		expect(vars[`paid_to*${aliceAddress}*${this.network.asset.myasset}`]).to.be.equal(50e9)
+		expect(vars[`paid_to*${bobAddress}*${this.network.asset.myasset}`]).to.be.equal(25e9)
+		expect(vars[`paid_to*${evaAddress}*${this.network.asset.myasset}`]).to.be.equal(12.5e9)
 
-		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset}`]).to.be.equal(0)
-		expect(vars[`bob/bobproject_unclaimed_${this.network.asset.myasset}`]).to.be.equal(0)
-		expect(vars[`eva/evaproject_unclaimed_${this.network.asset.myasset}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject*unclaimed*${this.network.asset.myasset}`]).to.be.equal(0)
+		expect(vars[`bob/bobproject*unclaimed*${this.network.asset.myasset}`]).to.be.equal(0)
+		expect(vars[`eva/evaproject*unclaimed*${this.network.asset.myasset}`]).to.be.equal(0)
 	}).timeout(60000)
 
 	it('15.8.1 Trigger aliceproject distribution 2', async () => {
@@ -448,25 +448,25 @@ describe('Obyte Cascading Donations Bot Test Case 15 Circular cascade(custom ass
 		const bobAddress = await this.network.wallet.bob.getAddress()
 		const evaAddress = await this.network.wallet.eva.getAddress()
 
-		expect(vars[`alice/aliceproject_pool_${this.network.asset.myasset}`]).to.be.equal(1.5625e9)
-		expect(vars[`bob/bobproject_pool_${this.network.asset.myasset}`]).to.be.equal(0)
-		expect(vars[`eva/evaproject_pool_${this.network.asset.myasset}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject*pool*${this.network.asset.myasset}`]).to.be.equal(1.5625e9)
+		expect(vars[`bob/bobproject*pool*${this.network.asset.myasset}`]).to.be.equal(0)
+		expect(vars[`eva/evaproject*pool*${this.network.asset.myasset}`]).to.be.equal(0)
 
-		expect(vars[`alice/aliceproject_to_bob/bobproject_${this.network.asset.myasset}`]).to.be.equal(56.25e9)
-		expect(vars[`bob/bobproject_to_eva/evaproject_${this.network.asset.myasset}`]).to.be.equal(28.125e9)
-		expect(vars[`eva/evaproject_to_alice/aliceproject_${this.network.asset.myasset}`]).to.be.equal(14.0625e9)
+		expect(vars[`alice/aliceproject*to*bob/bobproject*${this.network.asset.myasset}`]).to.be.equal(56.25e9)
+		expect(vars[`bob/bobproject*to*eva/evaproject*${this.network.asset.myasset}`]).to.be.equal(28.125e9)
+		expect(vars[`eva/evaproject*to*alice/aliceproject*${this.network.asset.myasset}`]).to.be.equal(14.0625e9)
 
-		expect(vars[`alice/aliceproject_total_received_${this.network.asset.myasset}`]).to.be.equal(114.0625e9)
-		expect(vars[`bob/bobproject_total_received_${this.network.asset.myasset}`]).to.be.equal(56.25e9)
-		expect(vars[`eva/evaproject_total_received_${this.network.asset.myasset}`]).to.be.equal(28.125e9)
+		expect(vars[`alice/aliceproject*total_received*${this.network.asset.myasset}`]).to.be.equal(114.0625e9)
+		expect(vars[`bob/bobproject*total_received*${this.network.asset.myasset}`]).to.be.equal(56.25e9)
+		expect(vars[`eva/evaproject*total_received*${this.network.asset.myasset}`]).to.be.equal(28.125e9)
 
-		expect(vars[`paid_to_${aliceAddress}_${this.network.asset.myasset}`]).to.be.equal(56.25e9)
-		expect(vars[`paid_to_${bobAddress}_${this.network.asset.myasset}`]).to.be.equal(28.125e9)
-		expect(vars[`paid_to_${evaAddress}_${this.network.asset.myasset}`]).to.be.equal(14.0625e9)
+		expect(vars[`paid_to*${aliceAddress}*${this.network.asset.myasset}`]).to.be.equal(56.25e9)
+		expect(vars[`paid_to*${bobAddress}*${this.network.asset.myasset}`]).to.be.equal(28.125e9)
+		expect(vars[`paid_to*${evaAddress}*${this.network.asset.myasset}`]).to.be.equal(14.0625e9)
 
-		expect(vars[`alice/aliceproject_unclaimed_${this.network.asset.myasset}`]).to.be.equal(0)
-		expect(vars[`bob/bobproject_unclaimed_${this.network.asset.myasset}`]).to.be.equal(0)
-		expect(vars[`eva/evaproject_unclaimed_${this.network.asset.myasset}`]).to.be.equal(0)
+		expect(vars[`alice/aliceproject*unclaimed*${this.network.asset.myasset}`]).to.be.equal(0)
+		expect(vars[`bob/bobproject*unclaimed*${this.network.asset.myasset}`]).to.be.equal(0)
+		expect(vars[`eva/evaproject*unclaimed*${this.network.asset.myasset}`]).to.be.equal(0)
 	}).timeout(60000)
 
 	after(async () => {

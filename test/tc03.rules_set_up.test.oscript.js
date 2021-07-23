@@ -91,7 +91,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 		expect(response.response.error).to.be.equal('Maximum number of nested repositories is 10')
 
 		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars['alice/myproject_rules']).to.be.undefined
+		expect(vars['alice/myproject*rules']).to.be.undefined
 	}).timeout(60000)
 
 	it('3.2.1 Alice fails to set rules with 11 different repos', async () => {
@@ -126,7 +126,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 		expect(response.response.error).to.be.equal('Maximum number of nested repositories is 10')
 
 		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars['alice/myproject_rules']).to.be.undefined
+		expect(vars['alice/myproject*rules']).to.be.undefined
 	}).timeout(60000)
 
 	it('3.3.1 Alice succeeds to set rules with 10 different repos', async () => {
@@ -160,7 +160,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 		expect(response.response.responseVars.message).to.be.equal('Rules for alice/myproject are set')
 
 		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars['alice/myproject_rules']).to.be.deep.equal({
+		expect(vars['alice/myproject*rules']).to.be.deep.equal({
 			'repo/1': 2,
 			'repo/2': 2,
 			'repo/3': 2,
@@ -200,7 +200,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 		expect(response.response.responseVars.message).to.be.equal('Rules for alice/myproject are set')
 
 		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars['alice/myproject_rules']).to.be.deep.equal({
+		expect(vars['alice/myproject*rules']).to.be.deep.equal({
 			'repo/1': 2,
 			'repo/2': 2,
 			'repo/3': 2,
@@ -231,7 +231,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 		expect(response.response.responseVars.message).to.be.equal('Rules for alice/myproject are set')
 
 		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars['alice/myproject_rules']).to.be.deep.equal({
+		expect(vars['alice/myproject*rules']).to.be.deep.equal({
 			'repo/1': 2
 		})
 	}).timeout(60000)
@@ -255,7 +255,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 		expect(response.response.responseVars.message).to.be.equal('Rules for alice/myproject are set')
 
 		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars['alice/myproject_rules']).to.be.deep.equal({})
+		expect(vars['alice/myproject*rules']).to.be.deep.equal({})
 	}).timeout(60000)
 
 	it('3.7.1 Alice fails to set rules that exceeds 100%', async () => {
@@ -285,7 +285,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 
 		// rules are same from previous set up
 		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars['alice/myproject_rules']).to.be.deep.equal({})
+		expect(vars['alice/myproject*rules']).to.be.deep.equal({})
 	}).timeout(60000)
 
 	it('3.8.1 Alice succeeds to set rules that equals 100%', async () => {
@@ -313,7 +313,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 		expect(response.response.responseVars.message).to.be.equal('Rules for alice/myproject are set')
 
 		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars['alice/myproject_rules']).to.be.deep.equal({
+		expect(vars['alice/myproject*rules']).to.be.deep.equal({
 			'repo/1': 25,
 			'repo/2': 25,
 			'repo/3': 25,
@@ -344,7 +344,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 		expect(response.response.responseVars.message).to.be.equal('Rules for alice/myproject are set')
 
 		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars['alice/myproject_rules']).to.be.deep.equal({
+		expect(vars['alice/myproject*rules']).to.be.deep.equal({
 			'repo/1': 25,
 			'repo/2': 25
 		})
@@ -375,7 +375,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 
 		// rules are same from previous set up
 		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars['alice/myproject_rules']).to.be.deep.equal({
+		expect(vars['alice/myproject*rules']).to.be.deep.equal({
 			'repo/1': 25,
 			'repo/2': 25
 		})
@@ -583,7 +583,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 		expect(response.response.responseVars.message).to.be.equal('Rules for alice/myproject are set')
 
 		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars['alice/myproject_rules']).to.be.deep.equal({
+		expect(vars['alice/myproject*rules']).to.be.deep.equal({
 			'repo/1': 20.5,
 			'repo/2': 20.123,
 			'repo/3': 20.12345

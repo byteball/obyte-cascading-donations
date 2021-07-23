@@ -42,8 +42,8 @@ describe('Obyte Cascading Donations Bot Test Case 4 Donor nickname set up', func
 		expect(response.response.responseVars.message).to.be.equal(`Nickname for ${aliceAddress} is now TheDonor`)
 
 		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars[`nickname_${aliceAddress}`]).to.be.equal('TheDonor')
-		expect(vars.nickname_owner_TheDonor).to.be.equal(aliceAddress)
+		expect(vars[`nickname*${aliceAddress}`]).to.be.equal('TheDonor')
+		expect(vars['nickname_owner*TheDonor']).to.be.equal(aliceAddress)
 	}).timeout(60000)
 
 	it('4.2.1 Alice resets a nickname', async () => {
@@ -67,9 +67,9 @@ describe('Obyte Cascading Donations Bot Test Case 4 Donor nickname set up', func
 		expect(response.response.responseVars.message).to.be.equal(`Nickname for ${aliceAddress} is now AnotherNickname`)
 
 		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars[`nickname_${aliceAddress}`]).to.be.equal('AnotherNickname')
-		expect(vars.nickname_owner_AnotherNickname).to.be.equal(aliceAddress)
-		expect(vars.nickname_owner_TheDonor).to.be.undefined
+		expect(vars[`nickname*${aliceAddress}`]).to.be.equal('AnotherNickname')
+		expect(vars['nickname_owner*AnotherNickname']).to.be.equal(aliceAddress)
+		expect(vars['nickname_owner*TheDonor']).to.be.undefined
 	}).timeout(60000)
 
 	it('4.3.1 Alice fails to set invalid nickname(number)', async () => {
@@ -170,10 +170,10 @@ describe('Obyte Cascading Donations Bot Test Case 4 Donor nickname set up', func
 		const bobAddress = await this.network.wallet.bob.getAddress()
 
 		const { vars } = await this.network.wallet.bob.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars[`nickname_${aliceAddress}`]).to.be.equal('AnotherNickname')
-		expect(vars.nickname_owner_AnotherNickname).to.be.equal(aliceAddress)
+		expect(vars[`nickname*${aliceAddress}`]).to.be.equal('AnotherNickname')
+		expect(vars['nickname_owner*AnotherNickname']).to.be.equal(aliceAddress)
 
-		expect(vars[`nickname_${bobAddress}`]).to.be.undefined
+		expect(vars[`nickname*${bobAddress}`]).to.be.undefined
 	}).timeout(60000)
 
 	it('4.5.1 Bob claims old alice\'s nickname', async () => {
@@ -198,11 +198,11 @@ describe('Obyte Cascading Donations Bot Test Case 4 Donor nickname set up', func
 		expect(response.response.responseVars.message).to.be.equal(`Nickname for ${bobAddress} is now TheDonor`)
 
 		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars[`nickname_${bobAddress}`]).to.be.equal('TheDonor')
-		expect(vars.nickname_owner_TheDonor).to.be.equal(bobAddress)
+		expect(vars[`nickname*${bobAddress}`]).to.be.equal('TheDonor')
+		expect(vars['nickname_owner*TheDonor']).to.be.equal(bobAddress)
 
-		expect(vars[`nickname_${aliceAddress}`]).to.be.equal('AnotherNickname')
-		expect(vars.nickname_owner_AnotherNickname).to.be.equal(aliceAddress)
+		expect(vars[`nickname*${aliceAddress}`]).to.be.equal('AnotherNickname')
+		expect(vars['nickname_owner*AnotherNickname']).to.be.equal(aliceAddress)
 	}).timeout(60000)
 
 	after(async () => {

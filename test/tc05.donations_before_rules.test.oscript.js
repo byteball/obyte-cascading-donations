@@ -76,8 +76,8 @@ describe('Obyte Cascading Donations Bot Test Case 5 donations before rules are s
 		expect(response.response.responseVars.donated_in_base).to.be.equal(10e9)
 
 		const { vars } = await this.network.wallet.bob.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars['alice/myproject_pool_base']).to.be.equal(10e9)
-		expect(vars['alice/myproject_total_received_base']).to.be.equal(10e9)
+		expect(vars['alice/myproject*pool*base']).to.be.equal(10e9)
+		expect(vars['alice/myproject*total_received*base']).to.be.equal(10e9)
 	}).timeout(60000)
 
 	it('5.2.1 Charlie donates to Alice\'s project in custom asset', async () => {
@@ -119,8 +119,8 @@ describe('Obyte Cascading Donations Bot Test Case 5 donations before rules are s
 		expect(response.response.responseVars[`donated_in_${this.network.asset.myasset}`]).to.be.equal(1e9)
 
 		const { vars } = await this.network.wallet.charlie.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars[`alice/myproject_pool_${this.network.asset.myasset}`]).to.be.equal(1e9)
-		expect(vars[`alice/myproject_total_received_${this.network.asset.myasset}`]).to.be.equal(1e9)
+		expect(vars[`alice/myproject*pool*${this.network.asset.myasset}`]).to.be.equal(1e9)
+		expect(vars[`alice/myproject*total_received*${this.network.asset.myasset}`]).to.be.equal(1e9)
 	}).timeout(60000)
 
 	it('5.3.1 Alice fails to trigger pool distribution', async () => {
@@ -144,12 +144,12 @@ describe('Obyte Cascading Donations Bot Test Case 5 donations before rules are s
 		expect(response.response.error).to.be.equal('Rules for repo alice/myproject are not set yet')
 
 		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars['alice/myproject_pool_base']).to.be.equal(10e9 + (BOUNCE_FEE - DONATION_STORAGE_FEE))
-		expect(vars['alice/myproject_total_received_base']).to.be.equal(10e9 + (BOUNCE_FEE - DONATION_STORAGE_FEE))
-		expect(vars[`alice/myproject_pool_${this.network.asset.myasset}`]).to.be.equal(1e9)
-		expect(vars[`alice/myproject_total_received_${this.network.asset.myasset}`]).to.be.equal(1e9)
-		expect(vars['alice/myproject_unclaimed_base']).to.be.undefined
-		expect(vars[`alice/myproject_unclaimed_${this.network.asset.myasset}`]).to.be.undefined
+		expect(vars['alice/myproject*pool*base']).to.be.equal(10e9 + (BOUNCE_FEE - DONATION_STORAGE_FEE))
+		expect(vars['alice/myproject*total_received*base']).to.be.equal(10e9 + (BOUNCE_FEE - DONATION_STORAGE_FEE))
+		expect(vars[`alice/myproject*pool*${this.network.asset.myasset}`]).to.be.equal(1e9)
+		expect(vars[`alice/myproject*total_received*${this.network.asset.myasset}`]).to.be.equal(1e9)
+		expect(vars['alice/myproject*unclaimed*base']).to.be.undefined
+		expect(vars[`alice/myproject*unclaimed*${this.network.asset.myasset}`]).to.be.undefined
 	}).timeout(60000)
 
 	it('5.4.1 Alice sets up rules for the project', async () => {
@@ -175,16 +175,16 @@ describe('Obyte Cascading Donations Bot Test Case 5 donations before rules are s
 		expect(response.response.responseVars.message).to.be.equal('Rules for alice/myproject are set')
 
 		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars['alice/myproject_rules']).to.be.deep.equal({
+		expect(vars['alice/myproject*rules']).to.be.deep.equal({
 			'repo/1': 25
 		})
 
-		expect(vars['alice/myproject_pool_base']).to.be.equal(10e9 + (BOUNCE_FEE - DONATION_STORAGE_FEE))
-		expect(vars['alice/myproject_total_received_base']).to.be.equal(10e9 + (BOUNCE_FEE - DONATION_STORAGE_FEE))
-		expect(vars[`alice/myproject_pool_${this.network.asset.myasset}`]).to.be.equal(1e9)
-		expect(vars[`alice/myproject_total_received_${this.network.asset.myasset}`]).to.be.equal(1e9)
-		expect(vars['alice/myproject_unclaimed_base']).to.be.undefined
-		expect(vars[`alice/myproject_unclaimed_${this.network.asset.myasset}`]).to.be.undefined
+		expect(vars['alice/myproject*pool*base']).to.be.equal(10e9 + (BOUNCE_FEE - DONATION_STORAGE_FEE))
+		expect(vars['alice/myproject*total_received*base']).to.be.equal(10e9 + (BOUNCE_FEE - DONATION_STORAGE_FEE))
+		expect(vars[`alice/myproject*pool*${this.network.asset.myasset}`]).to.be.equal(1e9)
+		expect(vars[`alice/myproject*total_received*${this.network.asset.myasset}`]).to.be.equal(1e9)
+		expect(vars['alice/myproject*unclaimed*base']).to.be.undefined
+		expect(vars[`alice/myproject*unclaimed*${this.network.asset.myasset}`]).to.be.undefined
 	}).timeout(60000)
 
 	it('5.5.1 Eva donates to Alice\'s project in base asset', async () => {
@@ -209,12 +209,12 @@ describe('Obyte Cascading Donations Bot Test Case 5 donations before rules are s
 		expect(response.response.responseVars.donated_in_base).to.be.equal(1e9)
 
 		const { vars } = await this.network.wallet.bob.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars['alice/myproject_pool_base']).to.be.equal(11e9 + (BOUNCE_FEE - DONATION_STORAGE_FEE))
-		expect(vars['alice/myproject_total_received_base']).to.be.equal(11e9 + (BOUNCE_FEE - DONATION_STORAGE_FEE))
-		expect(vars[`alice/myproject_pool_${this.network.asset.myasset}`]).to.be.equal(1e9)
-		expect(vars[`alice/myproject_total_received_${this.network.asset.myasset}`]).to.be.equal(1e9)
-		expect(vars['alice/myproject_unclaimed_base']).to.be.undefined
-		expect(vars[`alice/myproject_unclaimed_${this.network.asset.myasset}`]).to.be.undefined
+		expect(vars['alice/myproject*pool*base']).to.be.equal(11e9 + (BOUNCE_FEE - DONATION_STORAGE_FEE))
+		expect(vars['alice/myproject*total_received*base']).to.be.equal(11e9 + (BOUNCE_FEE - DONATION_STORAGE_FEE))
+		expect(vars[`alice/myproject*pool*${this.network.asset.myasset}`]).to.be.equal(1e9)
+		expect(vars[`alice/myproject*total_received*${this.network.asset.myasset}`]).to.be.equal(1e9)
+		expect(vars['alice/myproject*unclaimed*base']).to.be.undefined
+		expect(vars[`alice/myproject*unclaimed*${this.network.asset.myasset}`]).to.be.undefined
 	}).timeout(60000)
 
 	it('5.6.1 Alice triggers pool distribution(base)', async () => {
@@ -245,17 +245,17 @@ describe('Obyte Cascading Donations Bot Test Case 5 donations before rules are s
 
 		const aliceAddress = await this.network.wallet.alice.getAddress()
 
-		expect(vars[`paid_to_${aliceAddress}_base`]).to.be.equal(8.25e9 + 0.75 * (BOUNCE_FEE - DONATION_STORAGE_FEE))
-		expect(vars['alice/myproject_pool_base']).to.be.equal(0)
-		expect(vars['alice/myproject_total_received_base']).to.be.equal(11e9 + (BOUNCE_FEE - DONATION_STORAGE_FEE))
-		expect(vars[`alice/myproject_pool_${this.network.asset.myasset}`]).to.be.equal(1e9)
-		expect(vars[`alice/myproject_total_received_${this.network.asset.myasset}`]).to.be.equal(1e9)
+		expect(vars[`paid_to*${aliceAddress}*base`]).to.be.equal(8.25e9 + 0.75 * (BOUNCE_FEE - DONATION_STORAGE_FEE))
+		expect(vars['alice/myproject*pool*base']).to.be.equal(0)
+		expect(vars['alice/myproject*total_received*base']).to.be.equal(11e9 + (BOUNCE_FEE - DONATION_STORAGE_FEE))
+		expect(vars[`alice/myproject*pool*${this.network.asset.myasset}`]).to.be.equal(1e9)
+		expect(vars[`alice/myproject*total_received*${this.network.asset.myasset}`]).to.be.equal(1e9)
 
-		expect(vars['repo/1_pool_base']).to.be.equal(2.75e9 + 0.25 * (BOUNCE_FEE - DONATION_STORAGE_FEE))
-		expect(vars['alice/myproject_to_repo/1_base']).to.be.equal(2.75e9 + 0.25 * (BOUNCE_FEE - DONATION_STORAGE_FEE))
+		expect(vars['repo/1*pool*base']).to.be.equal(2.75e9 + 0.25 * (BOUNCE_FEE - DONATION_STORAGE_FEE))
+		expect(vars['alice/myproject*to*repo/1*base']).to.be.equal(2.75e9 + 0.25 * (BOUNCE_FEE - DONATION_STORAGE_FEE))
 
-		expect(vars['alice/myproject_unclaimed_base']).to.be.equal(0)
-		expect(vars[`alice/myproject_unclaimed_${this.network.asset.myasset}`]).to.be.undefined
+		expect(vars['alice/myproject*unclaimed*base']).to.be.equal(0)
+		expect(vars[`alice/myproject*unclaimed*${this.network.asset.myasset}`]).to.be.undefined
 
 		await this.network.witnessUntilStable(response.response_unit)
 
@@ -290,23 +290,23 @@ describe('Obyte Cascading Donations Bot Test Case 5 donations before rules are s
 		expect(response.response.responseVars.message).to.be.equal(`Distribution for repo alice/myproject in asset ${this.network.asset.myasset} done`)
 
 		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars[`alice/myproject_pool_${this.network.asset.myasset}`]).to.be.equal(0)
+		expect(vars[`alice/myproject*pool*${this.network.asset.myasset}`]).to.be.equal(0)
 		const aliceAddress = await this.network.wallet.alice.getAddress()
 
-		expect(vars['alice/myproject_pool_base']).to.be.equal(0)
-		expect(vars[`paid_to_${aliceAddress}_base`]).to.be.equal(8.25e9 + 0.75 * (BOUNCE_FEE - DONATION_STORAGE_FEE))
-		expect(vars['alice/myproject_total_received_base']).to.be.equal(11e9 + (BOUNCE_FEE - DONATION_STORAGE_FEE))
-		expect(vars['repo/1_pool_base']).to.be.equal(2.75e9 + 0.25 * (BOUNCE_FEE - DONATION_STORAGE_FEE))
-		expect(vars['alice/myproject_to_repo/1_base']).to.be.equal(2.75e9 + 0.25 * (BOUNCE_FEE - DONATION_STORAGE_FEE))
+		expect(vars['alice/myproject*pool*base']).to.be.equal(0)
+		expect(vars[`paid_to*${aliceAddress}*base`]).to.be.equal(8.25e9 + 0.75 * (BOUNCE_FEE - DONATION_STORAGE_FEE))
+		expect(vars['alice/myproject*total_received*base']).to.be.equal(11e9 + (BOUNCE_FEE - DONATION_STORAGE_FEE))
+		expect(vars['repo/1*pool*base']).to.be.equal(2.75e9 + 0.25 * (BOUNCE_FEE - DONATION_STORAGE_FEE))
+		expect(vars['alice/myproject*to*repo/1*base']).to.be.equal(2.75e9 + 0.25 * (BOUNCE_FEE - DONATION_STORAGE_FEE))
 
-		expect(vars[`alice/myproject_pool_${this.network.asset.myasset}`]).to.be.equal(0)
-		expect(vars[`paid_to_${aliceAddress}_${this.network.asset.myasset}`]).to.be.equal(0.75e9)
-		expect(vars[`alice/myproject_total_received_${this.network.asset.myasset}`]).to.be.equal(1e9)
-		expect(vars[`repo/1_pool_${this.network.asset.myasset}`]).to.be.equal(0.25e9)
-		expect(vars[`alice/myproject_to_repo/1_${this.network.asset.myasset}`]).to.be.equal(0.25e9)
+		expect(vars[`alice/myproject*pool*${this.network.asset.myasset}`]).to.be.equal(0)
+		expect(vars[`paid_to*${aliceAddress}*${this.network.asset.myasset}`]).to.be.equal(0.75e9)
+		expect(vars[`alice/myproject*total_received*${this.network.asset.myasset}`]).to.be.equal(1e9)
+		expect(vars[`repo/1*pool*${this.network.asset.myasset}`]).to.be.equal(0.25e9)
+		expect(vars[`alice/myproject*to*repo/1*${this.network.asset.myasset}`]).to.be.equal(0.25e9)
 
-		expect(vars['alice/myproject_unclaimed_base']).to.be.equal(0)
-		expect(vars[`alice/myproject_unclaimed_${this.network.asset.myasset}`]).to.be.equal(0)
+		expect(vars['alice/myproject*unclaimed*base']).to.be.equal(0)
+		expect(vars[`alice/myproject*unclaimed*${this.network.asset.myasset}`]).to.be.equal(0)
 
 		await this.network.witnessUntilStable(response.response_unit)
 
