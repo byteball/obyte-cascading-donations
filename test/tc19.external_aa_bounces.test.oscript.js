@@ -121,7 +121,7 @@ describe('Obyte Cascading Donations Bot Test Case 19 external AA bounces', funct
 		await this.network.witnessUntilStable(response.response_unit)
 
 		expect(response.bounced).to.be.true
-		expect(response.response.error).to.be.equal('one of secondary AAs bounced with error: Not enough fee to pay storage')
+		expect(response.response.error).to.be.equal('one of secondary AAs bounced with error: You only pay commission')
 	}).timeout(60000)
 
 	after(async () => {
