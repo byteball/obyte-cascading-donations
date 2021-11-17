@@ -53,12 +53,12 @@ trigger.data.nickname - nickname string
 ## State Vars
 
 ```javascript
-var[${repo}_rules] - distribution rules of repo
-var[${repo}_pool_${asset}] - repo's undistributed pool in asset
-var[${repo}_total_received_${asset}] - total received by repo in asset
-var[${repo1}_to_${repo2}_${asset}] - total forwarded from repo1 to repo2 in asset
-var[paid_to_${address}_${asset}] - total paid to repo owner
-var[${repo}_unclaimed_${asset}] - unclaimed funds of attested owner
-var[nickname_${address}] - donor ranking nickname
-var[nickname_owner_${nickname}] - nickanme's owner address
+var[${repo}*rules] - distribution rules of repo
+var[${repo}*pool*${asset}] - repo's undistributed pool in asset
+var[${repo}*total_received*${asset}] - total received by repo in asset
+var[${repo1}*to*${repo2}*${asset}] - total forwarded from repo1 to repo2 in asset
+var[paid_to*${address}*${asset}] - total paid to repo owner
+var[${repo}*unclaimed*${asset}] - unclaimed funds of attested owner
+var[nickname*${address}] - donor ranking nickname
+var[nickname_owner*${nickname}] - nickanme's owner address
 ```

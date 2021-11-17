@@ -144,8 +144,8 @@ describe('Obyte Cascading Donations Bot Test Case 5 donations before rules are s
 		expect(response.response.error).to.be.equal('Rules for repo alice/myproject are not set yet')
 
 		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars['alice/myproject*pool*base']).to.be.equal(10e9 + (BOUNCE_FEE - DONATION_STORAGE_FEE))
-		expect(vars['alice/myproject*total_received*base']).to.be.equal(10e9 + (BOUNCE_FEE - DONATION_STORAGE_FEE))
+		expect(vars['alice/myproject*pool*base']).to.be.equal(10e9)
+		expect(vars['alice/myproject*total_received*base']).to.be.equal(10e9)
 		expect(vars[`alice/myproject*pool*${this.network.asset.myasset}`]).to.be.equal(1e9)
 		expect(vars[`alice/myproject*total_received*${this.network.asset.myasset}`]).to.be.equal(1e9)
 		expect(vars['alice/myproject*unclaimed*base']).to.be.undefined
@@ -179,8 +179,8 @@ describe('Obyte Cascading Donations Bot Test Case 5 donations before rules are s
 			'repo/1': 25
 		})
 
-		expect(vars['alice/myproject*pool*base']).to.be.equal(10e9 + (BOUNCE_FEE - DONATION_STORAGE_FEE))
-		expect(vars['alice/myproject*total_received*base']).to.be.equal(10e9 + (BOUNCE_FEE - DONATION_STORAGE_FEE))
+		expect(vars['alice/myproject*pool*base']).to.be.equal(10e9)
+		expect(vars['alice/myproject*total_received*base']).to.be.equal(10e9)
 		expect(vars[`alice/myproject*pool*${this.network.asset.myasset}`]).to.be.equal(1e9)
 		expect(vars[`alice/myproject*total_received*${this.network.asset.myasset}`]).to.be.equal(1e9)
 		expect(vars['alice/myproject*unclaimed*base']).to.be.undefined
@@ -209,8 +209,8 @@ describe('Obyte Cascading Donations Bot Test Case 5 donations before rules are s
 		expect(response.response.responseVars.donated_in_base).to.be.equal(1e9)
 
 		const { vars } = await this.network.wallet.bob.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars['alice/myproject*pool*base']).to.be.equal(11e9 + (BOUNCE_FEE - DONATION_STORAGE_FEE))
-		expect(vars['alice/myproject*total_received*base']).to.be.equal(11e9 + (BOUNCE_FEE - DONATION_STORAGE_FEE))
+		expect(vars['alice/myproject*pool*base']).to.be.equal(11e9)
+		expect(vars['alice/myproject*total_received*base']).to.be.equal(11e9)
 		expect(vars[`alice/myproject*pool*${this.network.asset.myasset}`]).to.be.equal(1e9)
 		expect(vars[`alice/myproject*total_received*${this.network.asset.myasset}`]).to.be.equal(1e9)
 		expect(vars['alice/myproject*unclaimed*base']).to.be.undefined
@@ -234,7 +234,7 @@ describe('Obyte Cascading Donations Bot Test Case 5 donations before rules are s
 
 		const balanceAfterDistribute = await this.network.wallet.alice.getBalance()
 
-		expect(balanceAfterDistribute.base.pending).to.be.equal(8.25e9 + 0.75 * (BOUNCE_FEE - DONATION_STORAGE_FEE))
+		expect(balanceAfterDistribute.base.pending).to.be.equal(8.25e9)
 
 		const { response } = await this.network.getAaResponseToUnit(unit)
 
@@ -245,14 +245,14 @@ describe('Obyte Cascading Donations Bot Test Case 5 donations before rules are s
 
 		const aliceAddress = await this.network.wallet.alice.getAddress()
 
-		expect(vars[`paid_to*${aliceAddress}*base`]).to.be.equal(8.25e9 + 0.75 * (BOUNCE_FEE - DONATION_STORAGE_FEE))
+		expect(vars[`paid_to*${aliceAddress}*base`]).to.be.equal(8.25e9)
 		expect(vars['alice/myproject*pool*base']).to.be.equal(0)
-		expect(vars['alice/myproject*total_received*base']).to.be.equal(11e9 + (BOUNCE_FEE - DONATION_STORAGE_FEE))
+		expect(vars['alice/myproject*total_received*base']).to.be.equal(11e9)
 		expect(vars[`alice/myproject*pool*${this.network.asset.myasset}`]).to.be.equal(1e9)
 		expect(vars[`alice/myproject*total_received*${this.network.asset.myasset}`]).to.be.equal(1e9)
 
-		expect(vars['repo/1*pool*base']).to.be.equal(2.75e9 + 0.25 * (BOUNCE_FEE - DONATION_STORAGE_FEE))
-		expect(vars['alice/myproject*to*repo/1*base']).to.be.equal(2.75e9 + 0.25 * (BOUNCE_FEE - DONATION_STORAGE_FEE))
+		expect(vars['repo/1*pool*base']).to.be.equal(2.75e9)
+		expect(vars['alice/myproject*to*repo/1*base']).to.be.equal(2.75e9)
 
 		expect(vars['alice/myproject*unclaimed*base']).to.be.equal(0)
 		expect(vars[`alice/myproject*unclaimed*${this.network.asset.myasset}`]).to.be.undefined
@@ -261,7 +261,7 @@ describe('Obyte Cascading Donations Bot Test Case 5 donations before rules are s
 
 		const balanceAfterResponseStable = await this.network.wallet.alice.getBalance()
 		expect(balanceAfterResponseStable.base.pending).to.be.equal(0)
-		expect(balanceAfterResponseStable.base.stable).to.be.equal(8.25e9 + 0.75 * (BOUNCE_FEE - DONATION_STORAGE_FEE) - this.expenses.alice + DEFAULT_EXPENDABLE)
+		expect(balanceAfterResponseStable.base.stable).to.be.equal(8.25e9 - this.expenses.alice + DEFAULT_EXPENDABLE)
 	}).timeout(60000)
 
 	it('5.6.2 Alice triggers pool distribution(myasset)', async () => {
@@ -294,10 +294,10 @@ describe('Obyte Cascading Donations Bot Test Case 5 donations before rules are s
 		const aliceAddress = await this.network.wallet.alice.getAddress()
 
 		expect(vars['alice/myproject*pool*base']).to.be.equal(0)
-		expect(vars[`paid_to*${aliceAddress}*base`]).to.be.equal(8.25e9 + 0.75 * (BOUNCE_FEE - DONATION_STORAGE_FEE))
-		expect(vars['alice/myproject*total_received*base']).to.be.equal(11e9 + (BOUNCE_FEE - DONATION_STORAGE_FEE))
-		expect(vars['repo/1*pool*base']).to.be.equal(2.75e9 + 0.25 * (BOUNCE_FEE - DONATION_STORAGE_FEE))
-		expect(vars['alice/myproject*to*repo/1*base']).to.be.equal(2.75e9 + 0.25 * (BOUNCE_FEE - DONATION_STORAGE_FEE))
+		expect(vars[`paid_to*${aliceAddress}*base`]).to.be.equal(8.25e9)
+		expect(vars['alice/myproject*total_received*base']).to.be.equal(11e9)
+		expect(vars['repo/1*pool*base']).to.be.equal(2.75e9)
+		expect(vars['alice/myproject*to*repo/1*base']).to.be.equal(2.75e9)
 
 		expect(vars[`alice/myproject*pool*${this.network.asset.myasset}`]).to.be.equal(0)
 		expect(vars[`paid_to*${aliceAddress}*${this.network.asset.myasset}`]).to.be.equal(0.75e9)

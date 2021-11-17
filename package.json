@@ -1,6 +1,6 @@
 {
   "name": "obyte-cascading-donations",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "private": true,
   "scripts": {
     "test": "mocha --opts test/mocha.opts --require test/bootload.js",

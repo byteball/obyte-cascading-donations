@@ -97,20 +97,27 @@
 						state: `{
 							$parse_repo_str(trigger.data.repo);
 
-							$base_pool_var = trigger.data.repo || '*pool*base';
 							if (trigger.output[[asset=base]] < 1000) {
 								bounce('Not enough fee to pay storage');
 							}
-							$base_amount = trigger.output[[asset=base]] - 1000; // 1000 bytes storage fee
-							var[$base_pool_var] += $base_amount;
+							
+							if (trigger.output[[asset=base]] > 10000) {
+								$base_pool_var = trigger.data.repo || '*pool*base';
+								$base_amount = trigger.output[[asset=base]] - 1000; // 1000 bytes storage fee
+								var[$base_pool_var] += $base_amount;
 
-							$stat_total_base_var = trigger.data.repo || '*total_received*base';
-							var[$stat_total_base_var] += $base_amount;
-							response['donated_in_base'] = $base_amount;
+								$stat_total_base_var = trigger.data.repo || '*total_received*base';
+								var[$stat_total_base_var] += $base_amount;
+								response['donated_in_base'] = $base_amount;
+							}
 
 							$asset = trigger.output[[asset!=base]].asset;
 							if ($asset == 'ambiguous') {
 								bounce('Ambiguous asset');
+							}
+							
+							if (trigger.output[[asset=base]] <= 10000 AND $asset == 'none') {
+								bounce('You only pay commission');
 							}
 
 							if ($asset != 'none') {
