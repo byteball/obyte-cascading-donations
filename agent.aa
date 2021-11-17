@@ -97,6 +97,10 @@
 						state: `{
 							$parse_repo_str(trigger.data.repo);
 
+							if (trigger.output[[asset=base]] < 1000) {
+								bounce('Not enough fee to pay storage');
+							}
+							
 							if (trigger.output[[asset=base]] > 10000) {
 								$base_pool_var = trigger.data.repo || '*pool*base';
 								$base_amount = trigger.output[[asset=base]] - 1000; // 1000 bytes storage fee
