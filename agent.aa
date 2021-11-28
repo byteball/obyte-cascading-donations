@@ -83,6 +83,7 @@
 
 							var[trigger.data.repo || '*rules'] = $rules;
 							response['message'] = 'Rules for ' || trigger.data.repo || ' are set';
+							response['new_rules'] = json_stringify($rules);
 						}`
 					}
 				]
@@ -131,6 +132,10 @@
 							}
 
 							response['message'] = 'Successful donation to '  || trigger.data.repo;
+
+							if (trigger.data.donor AND is_valid_address(trigger.data.donor)) {
+								response['donor'] = trigger.data.donor;
+							}		
 						}`
 					}
 				]
