@@ -133,8 +133,8 @@
 
 							response['message'] = 'Successful donation to '  || trigger.data.repo;
 
-							if (trigger.data.author AND is_valid_address(trigger.data.author)) {
-								response['author'] = trigger.data.author;
+							if (trigger.data.donor AND is_valid_address(trigger.data.donor)) {
+								response['donor'] = trigger.data.donor;
 							}		
 						}`
 					}
