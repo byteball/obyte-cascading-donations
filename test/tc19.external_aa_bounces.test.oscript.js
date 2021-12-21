@@ -41,7 +41,7 @@ describe('Obyte Cascading Donations Bot Test Case 19 external AA bounces', funct
 		await this.network.witnessUntilStable(response.response_unit)
 
 		expect(response.bounced).to.be.true
-		expect(response.response.error).to.be.equal('one of secondary AAs bounced with error: Not enough fee to pay rules storage')
+		expect(response.response.error).to.be.equal('one of secondary AAs bounced with error: ' + this.network.agent.cascadingDonations + ': Not enough fee to pay rules storage')
 	}).timeout(60000)
 
 	it('19.2.1 Trigger distribution rules not set', async () => {
@@ -63,7 +63,7 @@ describe('Obyte Cascading Donations Bot Test Case 19 external AA bounces', funct
 		await this.network.witnessUntilStable(response.response_unit)
 
 		expect(response.bounced).to.be.true
-		expect(response.response.error).to.be.equal('one of secondary AAs bounced with error: Rules for repo owner/repo are not set yet')
+		expect(response.response.error).to.be.equal('one of secondary AAs bounced with error: ' + this.network.agent.cascadingDonations + ': Rules for repo owner/repo are not set yet')
 	}).timeout(60000)
 
 	it('19.3.1 Publish alice attestation profile for aliceproject', async () => {
@@ -121,7 +121,7 @@ describe('Obyte Cascading Donations Bot Test Case 19 external AA bounces', funct
 		await this.network.witnessUntilStable(response.response_unit)
 
 		expect(response.bounced).to.be.true
-		expect(response.response.error).to.be.equal('one of secondary AAs bounced with error: Not enough fee to pay storage')
+		expect(response.response.error).to.be.equal('one of secondary AAs bounced with error: ' + this.network.agent.cascadingDonations + ': Not enough fee to pay storage')
 	}).timeout(60000)
 
 	after(async () => {

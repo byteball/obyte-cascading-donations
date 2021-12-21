@@ -6,20 +6,27 @@
 // var[paid_to*${address}*${asset}] - total paid to repo owner
 // var[${repo}*unclaimed*${asset}] - unclaimed funds of attested owner
 // var[nickname*${address}] - donor ranking nickname
-// var[nickname_owner*${nickname}] - nickanme's owner address
+// var[nickname_owner*${nickname}] - nickname's owner address
 
 {
-	bounce_fees: { base: 10000 },
+	doc_url: "https://kivach.org/cascading-donations.json",
 	getters: `{
-		$attestor = 'QMWQRJV6NCYGUI6X7BWRKLLBQVQYLZ27';
+	//	$attestor = 'OYW2XTDKSNKGSEZ27LMGNOPJSYIXHBHC'; // mainnet
+	//	$attestor = 'QBIAZQZWO3YK2I2C3X37DCVY643S4NI4'; // testnet
+		$attestor = 'QMWQRJV6NCYGUI6X7BWRKLLBQVQYLZ27'; // testkit tests
 		$has_attestation = ($address, $github_username) => {
 			$attestation = attestation[[attestors=$attestor, address=$address]].github_username;
 			typeof($attestation) == 'string' AND $attestation == $github_username
 		};
 
 		$parse_repo_str = ($str) => {
+			if (!has_only($str, '\w/-') ) {
+				bounce('bad symbols in repo');
+			}
 			$sp = split($str, '/');
-			if (length($sp) != 2 OR length($sp[0]) < 1 OR length($sp[1]) < 1) {
+			$owner = $sp[0];
+			$project = $sp[1];
+			if (length($sp) != 2 OR length($owner) < 1 OR length($project) < 1) {
 				bounce('Invalid repo: ' || $str);
 			}
 			$sp
@@ -31,7 +38,7 @@
 			}
 
 			if (length($rules) > 10) {
-				bounce('Maximum number of nested repositories is 10');
+				bounce('Maximum number of recipient repositories is 10');
 			}
 
 			if (length($rules) == 0) {
@@ -47,6 +54,11 @@
 				if (typeof($value) != 'number') {
 					bounce('Not a number ' || $value || ' in repo ' || $key);
 				}
+
+				if ($value <= 0 OR $value > 100) {
+					bounce('percentage must be between 0 and 100');
+				}
+
 				$acc + $value
 			}, 0);
 
@@ -103,12 +115,10 @@
 							}
 							
 							if (trigger.output[[asset=base]] > 10000) {
-								$base_pool_var = trigger.data.repo || '*pool*base';
 								$base_amount = trigger.output[[asset=base]] - 1000; // 1000 bytes storage fee
-								var[$base_pool_var] += $base_amount;
+								var[trigger.data.repo || '*pool*base'] += $base_amount;
 
-								$stat_total_base_var = trigger.data.repo || '*total_received*base';
-								var[$stat_total_base_var] += $base_amount;
+								var[trigger.data.repo || '*total_received*base'] += $base_amount;
 								response['donated_in_base'] = $base_amount;
 							}
 
@@ -118,16 +128,14 @@
 							}
 							
 							if (trigger.output[[asset=base]] <= 10000 AND $asset == 'none') {
-								bounce('You only pay commission');
+								bounce('You paid only the commission');
 							}
 
 							if ($asset != 'none') {
 								$asset_amount = trigger.output[[asset!=base]];
-								$asset_pool_var = trigger.data.repo || '*pool*' || $asset;
-								var[$asset_pool_var] += $asset_amount;
+								var[trigger.data.repo || '*pool*' || $asset] += $asset_amount;
 
-								$stat_total_asset_var = trigger.data.repo || '*total_received*' || $asset;
-								var[$stat_total_asset_var] += $asset_amount;
+								var[trigger.data.repo || '*total_received*' || $asset] += $asset_amount;
 								response['donated_in_' || $asset] = $asset_amount;
 							}
 
@@ -148,22 +156,23 @@
 					$sp = $parse_repo_str(trigger.data.repo);
 					$owner = $sp[0];
 					$project = $sp[1];
-					$rules_var = trigger.data.repo || '*rules';
+					$rules = var[trigger.data.repo || '*rules'];
 					$claimer = $has_attestation(trigger.address, $owner) ? trigger.data.to OTHERWISE trigger.address : false;
 
-					if (exists(var[$rules_var])) {
+					if (exists($rules)) {
 						$asset = trigger.data.asset OTHERWISE 'base';
 						$asset_pool_var = trigger.data.repo || '*pool*' || $asset;
+						$balance = var[$asset_pool_var];
 
 						$unclaimed_var = trigger.data.repo || '*unclaimed*' || $asset;
 						$unclaimed = var[$unclaimed_var] OTHERWISE 0;
 
-						if (!var[$asset_pool_var] AND !($claimer AND $unclaimed)) {
+						if (!$balance AND !($claimer AND $unclaimed)) {
 							bounce('Nothing to distribute in repo ' || trigger.data.repo || ' for asset ' || $asset);
 						}
 
-						$to_self = var[$asset_pool_var] - reduce(var[$rules_var], 10, ($acc, $repo, $percent) => {
-							$acc + floor(var[$asset_pool_var] * $percent / 100)
+						$to_self = $balance - reduce($rules, 10, ($acc, $repo, $percent) => {
+							$acc + floor($balance * $percent / 100)
 						}, 0);
 					} else {
 						bounce('Rules for repo ' || trigger.data.repo || ' are not set yet');
@@ -186,21 +195,19 @@
 					{
 						app: 'state',
 						state: `{
-							foreach(var[$rules_var], 10, ($repo, $percent) => {
-								$to_share = floor(var[$asset_pool_var] * $percent / 100);
-								$repo_pool_var = $repo || '*pool*' || $asset;
-								var[$repo_pool_var] += $to_share;
+							// distribution from/to some extra long repos might fail here due to too long var names, exclude them from the rules in this case
+							foreach($rules, 10, ($repo, $percent) => {
+								$to_share = floor($balance * $percent / 100);
+								var[$repo || '*pool*' || $asset] += $to_share;
 
-								$stat_forwarded_var = trigger.data.repo || '*to*' || $repo || '*' || $asset;
-								var[$stat_forwarded_var] += $to_share;
+								var[trigger.data.repo || '*to*' || $repo || '*' || $asset] += $to_share;
 
-								$stat_total_recv_var = $repo || '*total_received*' || $asset;
-								var[$stat_total_recv_var] += $to_share;
+								var[$repo || '*total_received*' || $asset] += $to_share;
+								var[$repo || '*total_received_from_other_repos*' || $asset] += $to_share;
 							});
 
 							if ($claimer) {
-								$stat_paid_to_var = 'paid_to*' || $claimer || '*' || $asset;
-								var[$stat_paid_to_var] += $to_self + $unclaimed;
+								var['paid_to*' || $claimer || '*' || $asset] += $to_self + $unclaimed;
 								var[$unclaimed_var] = 0;
 
 								response['claimer'] = $claimer;

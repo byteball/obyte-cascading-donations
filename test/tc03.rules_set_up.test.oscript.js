@@ -88,7 +88,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 
 		const { response } = await this.network.getAaResponseToUnit(unit)
 		expect(response.bounced).to.be.true
-		expect(response.response.error).to.be.equal('Maximum number of nested repositories is 10')
+		expect(response.response.error).to.be.equal('Maximum number of recipient repositories is 10')
 
 		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
 		expect(vars['alice/myproject*rules']).to.be.undefined
@@ -123,7 +123,109 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 
 		const { response } = await this.network.getAaResponseToUnit(unit)
 		expect(response.bounced).to.be.true
-		expect(response.response.error).to.be.equal('Maximum number of nested repositories is 10')
+		expect(response.response.error).to.be.equal('Maximum number of recipient repositories is 10')
+
+		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
+		expect(vars['alice/myproject*rules']).to.be.undefined
+	}).timeout(60000)
+
+	it('3.2.2 Alice fails to set rules with an illegal character in her own repo name', async () => {
+		const { unit, error } = await this.network.wallet.alice.triggerAaWithData({
+			toAddress: this.network.agent.cascadingDonations,
+			amount: BOUNCE_FEE,
+			data: {
+				set_rules: 1,
+				repo: 'alice/mypr oject',
+				rules: {
+					'repo/1': 2,
+					'repo/2': 2,
+					'repo/3': 2,
+					'repo/4': 2,
+					'repo/5': 2,
+					'repo/6': 2,
+					'repo/7': 2,
+					'repo/8': 2,
+					'repo/9': 2,
+					'repo/10': 2,
+				}
+			}
+		})
+
+		expect(unit).to.be.validUnit
+		expect(error).to.be.null
+		await this.network.witnessUntilStable(unit)
+
+		const { response } = await this.network.getAaResponseToUnit(unit)
+		expect(response.bounced).to.be.true
+		expect(response.response.error).to.be.equal('bad symbols in repo')
+
+		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
+		expect(vars['alice/mypr oject*rules']).to.be.undefined
+	}).timeout(60000)
+
+	it('3.2.3 Alice fails to set rules with an illegal character in a forwarded repo name', async () => {
+		const { unit, error } = await this.network.wallet.alice.triggerAaWithData({
+			toAddress: this.network.agent.cascadingDonations,
+			amount: BOUNCE_FEE,
+			data: {
+				set_rules: 1,
+				repo: 'alice/myproject',
+				rules: {
+					'repo/1': 2,
+					'repo/2': 2,
+					'repo/3': 2,
+					'repo/4': 2,
+					'rep o/5': 2,
+					'repo/6': 2,
+					'repo/7': 2,
+					'repo/8': 2,
+					'repo/9': 2,
+					'repo/10': 2,
+				}
+			}
+		})
+
+		expect(unit).to.be.validUnit
+		expect(error).to.be.null
+		await this.network.witnessUntilStable(unit)
+
+		const { response } = await this.network.getAaResponseToUnit(unit)
+		expect(response.bounced).to.be.true
+		expect(response.response.error).to.be.equal('bad symbols in repo')
+
+		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
+		expect(vars['alice/myproject*rules']).to.be.undefined
+	}).timeout(60000)
+
+	it('3.2.4 Alice fails to set rules with a negative share', async () => {
+		const { unit, error } = await this.network.wallet.alice.triggerAaWithData({
+			toAddress: this.network.agent.cascadingDonations,
+			amount: BOUNCE_FEE,
+			data: {
+				set_rules: 1,
+				repo: 'alice/myproject',
+				rules: {
+					'repo/1': 2,
+					'repo/2': 2,
+					'repo/3': 2,
+					'repo/4': 2,
+					'repo/5': -2,
+					'repo/6': 2,
+					'repo/7': 2,
+					'repo/8': 2,
+					'repo/9': 2,
+					'repo/10': 2,
+				}
+			}
+		})
+
+		expect(unit).to.be.validUnit
+		expect(error).to.be.null
+		await this.network.witnessUntilStable(unit)
+
+		const { response } = await this.network.getAaResponseToUnit(unit)
+		expect(response.bounced).to.be.true
+		expect(response.response.error).to.be.equal('percentage must be between 0 and 100')
 
 		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
 		expect(vars['alice/myproject*rules']).to.be.undefined
