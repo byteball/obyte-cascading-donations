@@ -678,8 +678,8 @@ describe('Obyte Cascading Donations Bot Test Case 16 ao and distribution(base)',
 		expect(vars['alice/aliceproject*pool*base']).to.be.equal(0)
 		expect(vars['alice/aliceproject*total_received*base']).to.be.equal(40e9)
 
-		expect(vars[`paid_to*${aliceAddress}*base`]).to.be.equal(10e9)
-		expect(vars[`paid_to*${bobAddress}*base`]).to.be.equal(10e9)
+		expect(vars[`paid_to*${aliceAddress}*base`]).to.be.equal(15e9)
+		expect(vars[`paid_to*${bobAddress}*base`]).to.be.equal(5e9)
 		expect(vars[`paid_to*${evaAddress}*base`]).to.be.undefined
 
 		this.expenses.aa += await calculateAAResponseCommission(this.network, unit)
@@ -749,9 +749,9 @@ describe('Obyte Cascading Donations Bot Test Case 16 ao and distribution(base)',
 		expect(vars['alice/aliceproject*pool*base']).to.be.equal(0)
 		expect(vars['alice/aliceproject*total_received*base']).to.be.equal(50e9)
 
-		expect(vars[`paid_to*${aliceAddress}*base`]).to.be.equal(10e9)
-		expect(vars[`paid_to*${bobAddress}*base`]).to.be.equal(10e9)
-		expect(vars[`paid_to*${evaAddress}*base`]).to.be.equal(5e9)
+		expect(vars[`paid_to*${aliceAddress}*base`]).to.be.equal(20e9)
+		expect(vars[`paid_to*${bobAddress}*base`]).to.be.equal(5e9)
+		expect(vars[`paid_to*${evaAddress}*base`]).to.be.undefined
 
 		this.expenses.aa += await calculateAAResponseCommission(this.network, unit)
 		const aaBalance = await this.network.wallet.alice.getBalanceOf(this.network.agent.cascadingDonations)
@@ -885,9 +885,9 @@ describe('Obyte Cascading Donations Bot Test Case 16 ao and distribution(base)',
 		expect(vars['alice/aliceproject*pool*base']).to.be.equal(0)
 		expect(vars['alice/aliceproject*total_received*base']).to.be.equal(60e9)
 
-		expect(vars[`paid_to*${aliceAddress}*base`]).to.be.equal(10e9)
-		expect(vars[`paid_to*${bobAddress}*base`]).to.be.equal(10e9)
-		expect(vars[`paid_to*${evaAddress}*base`]).to.be.equal(5e9)
+		expect(vars[`paid_to*${aliceAddress}*base`]).to.be.equal(20e9)
+		expect(vars[`paid_to*${bobAddress}*base`]).to.be.equal(5e9)
+		expect(vars[`paid_to*${evaAddress}*base`]).to.be.undefined
 		expect(vars[`paid_to*${foxAddress}*base`]).to.be.equal(5e9)
 
 		this.expenses.aa += await calculateAAResponseCommission(this.network, unit)
@@ -955,9 +955,9 @@ describe('Obyte Cascading Donations Bot Test Case 16 ao and distribution(base)',
 		expect(vars['owner/repo20*total_received*base']).to.be.equal(12e9)
 		expect(vars['owner/repo30*total_received*base']).to.be.equal(18e9)
 
-		expect(vars[`paid_to*${aliceAddress}*base`]).to.be.equal(10e9)
-		expect(vars[`paid_to*${bobAddress}*base`]).to.be.equal(10e9)
-		expect(vars[`paid_to*${evaAddress}*base`]).to.be.equal(5e9)
+		expect(vars[`paid_to*${aliceAddress}*base`]).to.be.equal(20e9)
+		expect(vars[`paid_to*${bobAddress}*base`]).to.be.equal(5e9)
+		expect(vars[`paid_to*${evaAddress}*base`]).to.be.undefined
 		expect(vars[`paid_to*${foxAddress}*base`]).to.be.equal(5e9)
 
 		expect(vars['alice/aliceproject*unclaimed*base']).to.be.equal(0)

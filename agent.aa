@@ -214,7 +214,7 @@
 							});
 
 							if ($claimer) {
-								var['paid_to*' || $claimer || '*' || $asset] += $to_self + $unclaimed;
+								var['paid_to*' || trigger.address || '*' || $asset] += $to_self + $unclaimed;
 								var[$unclaimed_var] = 0;
 
 								response['claimer'] = $claimer;
