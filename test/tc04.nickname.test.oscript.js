@@ -15,6 +15,7 @@ describe('Obyte Cascading Donations Bot Test Case 4 Donor nickname set up', func
 	before(async () => {
 		this.network = await Network.create()
 			.with.agent({ cascadingDonations: path.join(__dirname, AA_PATH) })
+			.with.agent({ attestation_aa: path.join(__dirname, '../node_modules/github-attestation/github.aa') })
 			.with.wallet({ attestor: 100e9 }, ATTESTOR_MNEMONIC)
 			.with.wallet({ alice: 100e9 })
 			.with.wallet({ bob: 100e9 })

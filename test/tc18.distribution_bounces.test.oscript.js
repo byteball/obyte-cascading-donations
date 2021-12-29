@@ -40,6 +40,7 @@ describe('Obyte Cascading Donations Bot Test Case 18 distribution bounces', func
 	before(async () => {
 		this.network = await Network.create()
 			.with.agent({ cascadingDonations: path.join(__dirname, AA_PATH) })
+			.with.agent({ attestation_aa: path.join(__dirname, '../node_modules/github-attestation/github.aa') })
 			.with.asset({ myasset: {} })
 			.with.wallet({ attestor: 100e9 }, ATTESTOR_MNEMONIC)
 			.with.wallet({ alice: DEFAULT_EXPENDABLE })
@@ -58,6 +59,9 @@ describe('Obyte Cascading Donations Bot Test Case 18 distribution bounces', func
 
 	it('18.0.1 Publish alice attestation profile for aliceproject', async () => {
 		const { unit, error } = await this.network.wallet.attestor.sendMulti({
+			outputs_by_asset: {
+				base: [{address: this.network.agent.attestation_aa, amount: BOUNCE_FEE}]
+			},
 			messages: [
 				{
 					app: 'attestation',
@@ -68,7 +72,14 @@ describe('Obyte Cascading Donations Bot Test Case 18 distribution bounces', func
 							github_username: 'alice'
 						}
 					}
-				}
+				},
+				{
+					app: 'data',
+					payload: {
+						address: await this.network.wallet.alice.getAddress(),
+						github_username: 'alice',
+					}
+				},
 			]
 		})
 

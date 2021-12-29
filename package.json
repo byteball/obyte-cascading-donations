@@ -13,6 +13,7 @@
   "dependencies": {
     "chai": "^4.2.0",
     "mocha": "^6.2.0",
+		"github-attestation": "git+https://github.com/byteball/github-attestation.git",
     "aa-testkit": "valyakin/aa-testkit"
   },
   "devDependencies": {

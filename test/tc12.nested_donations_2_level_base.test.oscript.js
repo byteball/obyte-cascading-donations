@@ -31,6 +31,7 @@ describe('Obyte Cascading Donations Bot Test Case 12 Nested donations 2 level(ba
 	before(async () => {
 		this.network = await Network.create()
 			.with.agent({ cascadingDonations: path.join(__dirname, AA_PATH) })
+			.with.agent({ attestation_aa: path.join(__dirname, '../node_modules/github-attestation/github.aa') })
 			.with.wallet({ attestor: 100e9 }, ATTESTOR_MNEMONIC)
 			.with.wallet({ alice: DEFAULT_EXPENDABLE })
 			.with.wallet({ bob: DEFAULT_EXPENDABLE })
@@ -48,6 +49,9 @@ describe('Obyte Cascading Donations Bot Test Case 12 Nested donations 2 level(ba
 
 	it('12.0.1 Publish alice attestation profile', async () => {
 		const { unit, error } = await this.network.wallet.attestor.sendMulti({
+			outputs_by_asset: {
+				base: [{address: this.network.agent.attestation_aa, amount: BOUNCE_FEE}]
+			},
 			messages: [
 				{
 					app: 'attestation',
@@ -58,7 +62,14 @@ describe('Obyte Cascading Donations Bot Test Case 12 Nested donations 2 level(ba
 							github_username: 'alice'
 						}
 					}
-				}
+				},
+				{
+					app: 'data',
+					payload: {
+						address: await this.network.wallet.alice.getAddress(),
+						github_username: 'alice',
+					}
+				},
 			]
 		})
 
@@ -69,6 +80,9 @@ describe('Obyte Cascading Donations Bot Test Case 12 Nested donations 2 level(ba
 
 	it('12.0.2 Publish bob attestation profile', async () => {
 		const { unit, error } = await this.network.wallet.attestor.sendMulti({
+			outputs_by_asset: {
+				base: [{address: this.network.agent.attestation_aa, amount: BOUNCE_FEE}]
+			},
 			messages: [
 				{
 					app: 'attestation',
@@ -79,7 +93,14 @@ describe('Obyte Cascading Donations Bot Test Case 12 Nested donations 2 level(ba
 							github_username: 'bob'
 						}
 					}
-				}
+				},
+				{
+					app: 'data',
+					payload: {
+						address: await this.network.wallet.bob.getAddress(),
+						github_username: 'bob',
+					}
+				},
 			]
 		})
 
@@ -90,6 +111,9 @@ describe('Obyte Cascading Donations Bot Test Case 12 Nested donations 2 level(ba
 
 	it('12.0.3 Publish eva attestation profile', async () => {
 		const { unit, error } = await this.network.wallet.attestor.sendMulti({
+			outputs_by_asset: {
+				base: [{address: this.network.agent.attestation_aa, amount: BOUNCE_FEE}]
+			},
 			messages: [
 				{
 					app: 'attestation',
@@ -100,7 +124,14 @@ describe('Obyte Cascading Donations Bot Test Case 12 Nested donations 2 level(ba
 							github_username: 'eva'
 						}
 					}
-				}
+				},
+				{
+					app: 'data',
+					payload: {
+						address: await this.network.wallet.eva.getAddress(),
+						github_username: 'eva',
+					}
+				},
 			]
 		})
 

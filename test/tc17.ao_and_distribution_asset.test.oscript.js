@@ -36,6 +36,7 @@ describe('Obyte Cascading Donations Bot Test Case 17 ao and distribution(asset)'
 	before(async () => {
 		this.network = await Network.create()
 			.with.agent({ cascadingDonations: path.join(__dirname, AA_PATH) })
+			.with.agent({ attestation_aa: path.join(__dirname, '../node_modules/github-attestation/github.aa') })
 			.with.asset({ myasset: {} })
 			.with.wallet({ attestor: 100e9 }, ATTESTOR_MNEMONIC)
 			.with.wallet({ alice: DEFAULT_EXPENDABLE })
@@ -48,6 +49,9 @@ describe('Obyte Cascading Donations Bot Test Case 17 ao and distribution(asset)'
 
 	it('17.0.1 Publish alice attestation profile for aliceproject', async () => {
 		const { unit, error } = await this.network.wallet.attestor.sendMulti({
+			outputs_by_asset: {
+				base: [{address: this.network.agent.attestation_aa, amount: BOUNCE_FEE}]
+			},
 			messages: [
 				{
 					app: 'attestation',
@@ -58,7 +62,14 @@ describe('Obyte Cascading Donations Bot Test Case 17 ao and distribution(asset)'
 							github_username: 'alice'
 						}
 					}
-				}
+				},
+				{
+					app: 'data',
+					payload: {
+						address: await this.network.wallet.alice.getAddress(),
+						github_username: 'alice',
+					}
+				},
 			]
 		})
 
@@ -69,6 +80,9 @@ describe('Obyte Cascading Donations Bot Test Case 17 ao and distribution(asset)'
 
 	it('17.0.2 Publish bob attestation profile for aliceproject', async () => {
 		const { unit, error } = await this.network.wallet.attestor.sendMulti({
+			outputs_by_asset: {
+				base: [{address: this.network.agent.attestation_aa, amount: BOUNCE_FEE}]
+			},
 			messages: [
 				{
 					app: 'attestation',
@@ -79,7 +93,14 @@ describe('Obyte Cascading Donations Bot Test Case 17 ao and distribution(asset)'
 							github_username: 'alice'
 						}
 					}
-				}
+				},
+				{
+					app: 'data',
+					payload: {
+						address: await this.network.wallet.bob.getAddress(),
+						github_username: 'alice',
+					}
+				},
 			]
 		})
 
@@ -233,6 +254,40 @@ describe('Obyte Cascading Donations Bot Test Case 17 ao and distribution(asset)'
 
 		const aaBalance = await this.network.wallet.alice.getBalanceOf(this.network.agent.cascadingDonations)
 		expect(aaBalance[this.network.asset.myasset].stable).to.be.equal(15e9)
+	}).timeout(60000)
+
+	it('17.5.0 Commit bob\'s attestation for aliceproject', async () => {
+		const { error: tt_error } = await this.network.timetravel({ shift: '3d' })
+		expect(tt_error).to.be.null
+
+		const { unit, error } = await this.network.wallet.attestor.sendMulti({
+			outputs_by_asset: {
+				base: [{address: this.network.agent.attestation_aa, amount: BOUNCE_FEE}]
+			},
+			messages: [
+				{
+					app: 'attestation',
+					payload_location: 'inline',
+					payload: {
+						address: await this.network.wallet.bob.getAddress(),
+						profile: {
+							github_username: 'alice'
+						}
+					}
+				},
+				{
+					app: 'data',
+					payload: {
+						address: await this.network.wallet.bob.getAddress(),
+						github_username: 'alice',
+					}
+				},
+			]
+		})
+
+		expect(unit).to.be.validUnit
+		expect(error).to.be.null
+		await this.network.witnessUntilStable(unit)
 	}).timeout(60000)
 
 	it('17.5.1 Bob(ao) triggers distribution', async () => {
@@ -391,6 +446,72 @@ describe('Obyte Cascading Donations Bot Test Case 17 ao and distribution(asset)'
 
 		const aaBalance = await this.network.wallet.alice.getBalanceOf(this.network.agent.cascadingDonations)
 		expect(aaBalance[this.network.asset.myasset].stable).to.be.equal(20e9)
+	}).timeout(60000)
+
+
+	it('17.9.0.1 Publish alice attestation profile for aliceproject again', async () => {
+		const { unit, error } = await this.network.wallet.attestor.sendMulti({
+			outputs_by_asset: {
+				base: [{address: this.network.agent.attestation_aa, amount: BOUNCE_FEE}]
+			},
+			messages: [
+				{
+					app: 'attestation',
+					payload_location: 'inline',
+					payload: {
+						address: await this.network.wallet.alice.getAddress(),
+						profile: {
+							github_username: 'alice'
+						}
+					}
+				},
+				{
+					app: 'data',
+					payload: {
+						address: await this.network.wallet.alice.getAddress(),
+						github_username: 'alice',
+					}
+				},
+			]
+		})
+
+		expect(unit).to.be.validUnit
+		expect(error).to.be.null
+		await this.network.witnessUntilStable(unit)
+	}).timeout(60000)
+
+	it('17.9.0.2 Commit alice\'s attestation for aliceproject', async () => {
+		const { error: tt_error } = await this.network.timetravel({ shift: '3d' })
+		expect(tt_error).to.be.null
+
+		const { unit, error } = await this.network.wallet.attestor.sendMulti({
+			outputs_by_asset: {
+				base: [{address: this.network.agent.attestation_aa, amount: BOUNCE_FEE}]
+			},
+			messages: [
+				{
+					app: 'attestation',
+					payload_location: 'inline',
+					payload: {
+						address: await this.network.wallet.alice.getAddress(),
+						profile: {
+							github_username: 'alice'
+						}
+					}
+				},
+				{
+					app: 'data',
+					payload: {
+						address: await this.network.wallet.alice.getAddress(),
+						github_username: 'alice',
+					}
+				},
+			]
+		})
+
+		expect(unit).to.be.validUnit
+		expect(error).to.be.null
+		await this.network.witnessUntilStable(unit)
 	}).timeout(60000)
 
 	it('17.9.1 Alice(ao) claims unclaimed pool', async () => {
@@ -717,6 +838,9 @@ describe('Obyte Cascading Donations Bot Test Case 17 ao and distribution(asset)'
 
 	it('17.17.1 Publish Fox attestation profile for aliceproject', async () => {
 		const { unit, error } = await this.network.wallet.attestor.sendMulti({
+			outputs_by_asset: {
+				base: [{address: this.network.agent.attestation_aa, amount: BOUNCE_FEE}]
+			},
 			messages: [
 				{
 					app: 'attestation',
@@ -727,7 +851,48 @@ describe('Obyte Cascading Donations Bot Test Case 17 ao and distribution(asset)'
 							github_username: 'alice'
 						}
 					}
-				}
+				},
+				{
+					app: 'data',
+					payload: {
+						address: await this.network.wallet.fox.getAddress(),
+						github_username: 'alice',
+					}
+				},
+			]
+		})
+
+		expect(unit).to.be.validUnit
+		expect(error).to.be.null
+		await this.network.witnessUntilStable(unit)
+	}).timeout(60000)
+
+	it('17.17.2 Commit Fox\'s attestation for aliceproject', async () => {
+		const { error: tt_error } = await this.network.timetravel({ shift: '3d' })
+		expect(tt_error).to.be.null
+
+		const { unit, error } = await this.network.wallet.attestor.sendMulti({
+			outputs_by_asset: {
+				base: [{address: this.network.agent.attestation_aa, amount: BOUNCE_FEE}]
+			},
+			messages: [
+				{
+					app: 'attestation',
+					payload_location: 'inline',
+					payload: {
+						address: await this.network.wallet.fox.getAddress(),
+						profile: {
+							github_username: 'alice'
+						}
+					}
+				},
+				{
+					app: 'data',
+					payload: {
+						address: await this.network.wallet.fox.getAddress(),
+						github_username: 'alice',
+					}
+				},
 			]
 		})
 

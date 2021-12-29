@@ -17,6 +17,7 @@ describe('Obyte Cascading Donations Bot Test Case 1 Distribute base without rule
 	before(async () => {
 		this.network = await Network.create()
 			.with.agent({ cascadingDonations: path.join(__dirname, AA_PATH) })
+			.with.agent({ attestation_aa: path.join(__dirname, '../node_modules/github-attestation/github.aa') })
 			.with.wallet({ attestor: 100e9 }, ATTESTOR_MNEMONIC)
 			.with.wallet({ alice: 100e9 })
 			.with.wallet({ bob: 100e9 })
@@ -30,6 +31,9 @@ describe('Obyte Cascading Donations Bot Test Case 1 Distribute base without rule
 
 	it('1.0.1 Publish alice attestation profile', async () => {
 		const { unit, error } = await this.network.wallet.attestor.sendMulti({
+			outputs_by_asset: {
+				base: [{address: this.network.agent.attestation_aa, amount: BOUNCE_FEE}]
+			},
 			messages: [
 				{
 					app: 'attestation',
@@ -40,7 +44,14 @@ describe('Obyte Cascading Donations Bot Test Case 1 Distribute base without rule
 							github_username: 'alice'
 						}
 					}
-				}
+				},
+				{
+					app: 'data',
+					payload: {
+						address: await this.network.wallet.alice.getAddress(),
+						github_username: 'alice',
+					}
+				},
 			]
 		})
 

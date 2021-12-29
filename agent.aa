@@ -14,9 +14,16 @@
 	//	$attestor = 'OYW2XTDKSNKGSEZ27LMGNOPJSYIXHBHC'; // mainnet
 	//	$attestor = 'QBIAZQZWO3YK2I2C3X37DCVY643S4NI4'; // testnet
 		$attestor = 'QMWQRJV6NCYGUI6X7BWRKLLBQVQYLZ27'; // testkit tests
+
+	//	$attestor_aa = 'NPTNZFOTBQ7DVTR4OVV7SEMBNYFP2ZZS'; // mainnet
+	//	$attestor_aa = 'HZENJOEOLEBRGKQYJBGGIJNLX7RAAVSH'; // testnet
+		$attestor_aa = 'NBT6VI5RSJ2BQTPUENB4A6DMY4VW7NJ3'; // testkit tests
+
 		$has_attestation = ($address, $github_username) => {
-			$attestation = attestation[[attestors=$attestor, address=$address]].github_username;
-			typeof($attestation) == 'string' AND $attestation == $github_username
+			$owner_address = var[$attestor_aa]['u2a_' || $github_username];
+			$owner_address AND $owner_address == $address
+		//	$attestation = attestation[[attestors=$attestor, address=$address]].github_username;
+		//	typeof($attestation) == 'string' AND $attestation == $github_username
 		};
 
 		$parse_repo_str = ($str) => {
