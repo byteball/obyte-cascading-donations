@@ -27,7 +27,7 @@
 		};
 
 		$parse_repo_str = ($str) => {
-			if (!has_only($str, '\w/-') ) {
+			if (!has_only($str, '\w/.-') ) {
 				bounce('bad symbols in repo');
 			}
 			$sp = split($str, '/');

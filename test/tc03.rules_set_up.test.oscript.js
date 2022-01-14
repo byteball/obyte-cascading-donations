@@ -111,7 +111,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 			amount: BOUNCE_FEE,
 			data: {
 				set_rules: 1,
-				repo: 'alice/myproject',
+				repo: 'alice/mypro.ject',
 				rules: {
 					'repo/1': 2,
 					'repo/2': 2,
@@ -407,7 +407,7 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 			amount: BOUNCE_FEE,
 			data: {
 				set_rules: 1,
-				repo: 'alice/myproject',
+				repo: 'alice/my.project',
 				rules: {
 					'repo/1': 25,
 					'repo/2': 25,
@@ -423,10 +423,10 @@ describe('Obyte Cascading Donations Bot Test Case 3 Rules set up', function () {
 
 		const { response } = await this.network.getAaResponseToUnit(unit)
 		expect(response.bounced).to.be.false
-		expect(response.response.responseVars.message).to.be.equal('Rules for alice/myproject are set')
+		expect(response.response.responseVars.message).to.be.equal('Rules for alice/my.project are set')
 
 		const { vars } = await this.network.wallet.alice.readAAStateVars(this.network.agent.cascadingDonations)
-		expect(vars['alice/myproject*rules']).to.be.deep.equal({
+		expect(vars['alice/my.project*rules']).to.be.deep.equal({
 			'repo/1': 25,
 			'repo/2': 25,
 			'repo/3': 25,
