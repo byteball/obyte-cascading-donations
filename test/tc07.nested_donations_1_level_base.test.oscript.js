@@ -193,9 +193,13 @@ describe('Obyte Cascading Donations Bot Test Case 7 Nested donations 1 level(bas
 		expect(response.response.responseVars.message).to.be.equal('Successful donation to alice/aliceproject')
 		expect(response.response.responseVars.donated_in_base).to.be.equal(100e9)
 
+		const charlieAddress = await this.network.wallet.charlie.getAddress()
+
 		const { vars } = await this.network.wallet.bob.readAAStateVars(this.network.agent.cascadingDonations)
 		expect(vars['alice/aliceproject*pool*base']).to.be.equal(100e9)
 		expect(vars['alice/aliceproject*total_received*base']).to.be.equal(100e9)
+		expect(vars[`${charlieAddress}*to*alice/aliceproject*base`]).to.be.equal(100e9)
+		expect(vars[`alice/aliceproject*from*${charlieAddress}*base`]).to.be.equal(100e9)
 		expect(vars['alice/aliceproject*unclaimed*base']).to.be.undefined
 	}).timeout(60000)
 
@@ -237,6 +241,7 @@ describe('Obyte Cascading Donations Bot Test Case 7 Nested donations 1 level(bas
 		expect(vars['eva/evaproject*pool*base']).to.be.equal(20e9)
 		expect(vars['eva/evaproject*total_received*base']).to.be.equal(20e9)
 		expect(vars['alice/aliceproject*to*eva/evaproject*base']).to.be.equal(20e9)
+		expect(vars['eva/evaproject*from*alice/aliceproject*base']).to.be.equal(20e9)
 
 		expect(vars['alice/aliceproject*unclaimed*base']).to.be.equal(0)
 		expect(vars['bob/bobproject*unclaimed*base']).to.be.undefined

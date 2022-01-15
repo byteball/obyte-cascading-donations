@@ -2,7 +2,9 @@
 // var[${repo}*rules] - distribution rules of repo
 // var[${repo}*pool*${asset}] - repo's undistributed pool in asset
 // var[${repo}*total_received*${asset}] - total received by repo in asset
-// var[${repo1}*to*${repo2}*${asset}] - total forwarded from repo1 to repo2 in asset
+// var[${repo}*total_received_from_other_repos*${asset}] - total received by repo from other repos in asset
+// var[${repo1_or_user_address}*to*${repo2}*${asset}] - total received or forwarded from repo1_or_user_address to repo2 in asset
+// var[${repo2}*from*${repo1_or_user_address}*${asset}] - total received or forwarded from repo1_or_user_address to repo2 in asset
 // var[paid_to*${address}*${asset}] - total paid to repo owner
 // var[${repo}*unclaimed*${asset}] - unclaimed funds of attested owner
 // var[nickname*${address}] - donor ranking nickname
@@ -71,6 +73,30 @@
 
 			$total
 		};
+
+		$get_total_donated = ($donor_address_or_repo, $recipient_repo, $asset) => 
+			var[$donor_address_or_repo || '*to*' || $recipient_repo || '*' || $asset];
+
+		// voting weight of the donor: sum of their donations with all amounts converted to a single asset using $exchange_rates
+		$get_donor_weight = ($donor_address_or_repo, $recipient_repo, $exchange_rates) => 
+			reduce(
+				$exchange_rates,
+				20,
+				($acc, $asset, $exchange_rate) => 
+					$acc + var[$donor_address_or_repo || '*to*' || $recipient_repo || '*' || $asset] * $exchange_rate,
+				0
+			);
+
+		// all donations to a repo with all amounts converted to a single asset using $exchange_rates
+		$get_total_weight = ($recipient_repo, $exchange_rates) => 
+			reduce(
+				$exchange_rates,
+				20,
+				($acc, $asset, $exchange_rate) => 
+					$acc + var[$recipient_repo || '*total_received*' || $asset] * $exchange_rate,
+				0
+			);
+
 	}`,
 	messages: {
 		cases: [
@@ -120,12 +146,24 @@
 							if (trigger.output[[asset=base]] < 1000) {
 								bounce('Not enough fee to pay storage');
 							}
+
+							if (trigger.data.donor AND is_valid_address(trigger.data.donor)) {
+								$donor = trigger.data.donor;
+								response['donor'] = $donor;
+							}
+							else {
+								$donor = trigger.address;
+							}
 							
 							if (trigger.output[[asset=base]] > 10000) {
 								$base_amount = trigger.output[[asset=base]] - 1000; // 1000 bytes storage fee
 								var[trigger.data.repo || '*pool*base'] += $base_amount;
 
 								var[trigger.data.repo || '*total_received*base'] += $base_amount;
+
+								var[$donor || '*to*' || trigger.data.repo || '*base'] += $base_amount;
+								var[trigger.data.repo || '*from*' || $donor || '*base'] += $base_amount;
+								
 								response['donated_in_base'] = $base_amount;
 							}
 
@@ -143,14 +181,14 @@
 								var[trigger.data.repo || '*pool*' || $asset] += $asset_amount;
 
 								var[trigger.data.repo || '*total_received*' || $asset] += $asset_amount;
+
+								var[$donor || '*to*' || trigger.data.repo || '*' || $asset] += $asset_amount;
+								var[trigger.data.repo || '*from*' || $donor || '*' || $asset] += $asset_amount;
+								
 								response['donated_in_' || $asset] = $asset_amount;
 							}
 
 							response['message'] = 'Successful donation to '  || trigger.data.repo;
-
-							if (trigger.data.donor AND is_valid_address(trigger.data.donor)) {
-								response['donor'] = trigger.data.donor;
-							}		
 						}`
 					}
 				]
@@ -208,6 +246,7 @@
 								var[$repo || '*pool*' || $asset] += $to_share;
 
 								var[trigger.data.repo || '*to*' || $repo || '*' || $asset] += $to_share;
+								var[$repo || '*from*' || trigger.data.repo || '*' || $asset] += $to_share;
 
 								var[$repo || '*total_received*' || $asset] += $to_share;
 								var[$repo || '*total_received_from_other_repos*' || $asset] += $to_share;

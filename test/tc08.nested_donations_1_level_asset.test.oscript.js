@@ -200,9 +200,13 @@ describe('Obyte Cascading Donations Bot Test Case 8 Nested donations 1 level(cus
 		expect(response.response.responseVars.message).to.be.equal('Successful donation to alice/aliceproject')
 		expect(response.response.responseVars[`donated_in_${this.network.asset.myasset}`]).to.be.equal(100e9)
 
+		const charlieAddress = await this.network.wallet.charlie.getAddress()
+
 		const { vars } = await this.network.wallet.charlie.readAAStateVars(this.network.agent.cascadingDonations)
 		expect(vars[`alice/aliceproject*pool*${this.network.asset.myasset}`]).to.be.equal(100e9)
 		expect(vars[`alice/aliceproject*total_received*${this.network.asset.myasset}`]).to.be.equal(100e9)
+		expect(vars[`${charlieAddress}*to*alice/aliceproject*${this.network.asset.myasset}`]).to.be.equal(100e9)
+		expect(vars[`alice/aliceproject*from*${charlieAddress}*${this.network.asset.myasset}`]).to.be.equal(100e9)
 	}).timeout(60000)
 
 	it('8.4.1 Trigger distribution for aliceproject(myasset)', async () => {
@@ -239,6 +243,7 @@ describe('Obyte Cascading Donations Bot Test Case 8 Nested donations 1 level(cus
 		expect(vars[`bob/bobproject*pool*${this.network.asset.myasset}`]).to.be.equal(45e9)
 		expect(vars[`bob/bobproject*total_received*${this.network.asset.myasset}`]).to.be.equal(45e9)
 		expect(vars[`alice/aliceproject*to*bob/bobproject*${this.network.asset.myasset}`]).to.be.equal(45e9)
+		expect(vars[`bob/bobproject*from*alice/aliceproject*${this.network.asset.myasset}`]).to.be.equal(45e9)
 
 		expect(vars[`eva/evaproject*pool*${this.network.asset.myasset}`]).to.be.equal(25e9)
 		expect(vars[`eva/evaproject*total_received*${this.network.asset.myasset}`]).to.be.equal(25e9)
