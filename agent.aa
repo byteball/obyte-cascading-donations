@@ -1,5 +1,6 @@
 // vars:
 // var[${repo}*rules] - distribution rules of repo
+// var[${repo}*notification_aa] - optional notification AA of the repo to notify about the received donations
 // var[${repo}*pool*${asset}] - repo's undistributed pool in asset
 // var[${repo}*total_received*${asset}] - total received by repo in asset
 // var[${repo}*total_received_from_other_repos*${asset}] - total received by repo from other repos in asset
@@ -134,29 +135,92 @@
 				]
 			},
 
-			// donate
+			// set notification AA
 			{
-				if: `{trigger.data.donate AND trigger.data.repo}`,
+				if: `{trigger.data.notification_aa AND trigger.data.repo}`,
 				messages: [
 					{
 						app: 'state',
 						state: `{
-							$parse_repo_str(trigger.data.repo);
+							$sp = $parse_repo_str(trigger.data.repo);
+							$owner = $sp[0];
+							$project = $sp[1];
 
-							if (trigger.output[[asset=base]] < 1000) {
-								bounce('Not enough fee to pay storage');
+							if (!$has_attestation(trigger.address, $owner)) {
+								bounce('Address ' || trigger.address || ' has no attestation for ' || $owner);
 							}
 
-							if (trigger.data.donor AND is_valid_address(trigger.data.donor)) {
-								$donor = trigger.data.donor;
-								response['donor'] = $donor;
-							}
-							else {
-								$donor = trigger.address;
-							}
-							
-							if (trigger.output[[asset=base]] > 10000) {
-								$base_amount = trigger.output[[asset=base]] - 1000; // 1000 bytes storage fee
+							require(is_aa(trigger.data.notification_aa), "should be an AA");
+
+							var[trigger.data.repo || '*notification_aa'] = trigger.data.notification_aa;
+							response['message'] = 'Set notification AA for ' || trigger.data.repo;
+						}`
+					}
+				]
+			},
+
+			// donate
+			{
+				if: `{trigger.data.donate AND trigger.data.repo}`,
+				init: `{
+					$parse_repo_str(trigger.data.repo);
+
+					$notification_aa = var[trigger.data.repo || '*notification_aa'];
+					$min_fee = /*$notification_aa ? 3000 :*/ 1000;
+
+					if (trigger.output[[asset=base]] < $min_fee) {
+						bounce('Not enough fee to pay storage');
+					}
+
+					if (trigger.data.donor AND is_valid_address(trigger.data.donor)) {
+						$donor = trigger.data.donor;
+						response['donor'] = $donor;
+					}
+					else {
+						$donor = trigger.address;
+					}
+
+					if (trigger.output[[asset=base]] > 10000) {
+						$base_amount = trigger.output[[asset=base]] - $min_fee; // 1000 bytes storage fee
+					}
+
+					$asset = trigger.output[[asset!=base]].asset;
+					if ($asset == 'ambiguous') {
+						bounce('Ambiguous asset');
+					}
+					
+					if (trigger.output[[asset=base]] <= 10000 AND $asset == 'none') {
+						bounce('You paid only the commission');
+					}
+
+					if ($asset != 'none') {
+						$asset_amount = trigger.output[[asset!=base]];
+					}
+				}`,
+				messages: [
+					{
+						if: `{$notification_aa}`,
+						app: 'payment',
+						payload: {
+							asset: 'base',
+							outputs: [{address: `{$notification_aa}`, amount: 100}]
+						}
+					},
+					{
+						if: `{$notification_aa}`,
+						app: 'data',
+						payload: {
+							repo: `{trigger.data.repo}`,
+							donor: `{$donor}`,
+							base_amount: `{$base_amount OTHERWISE ''}`,
+							asset_amount: `{$asset_amount OTHERWISE ''}`,
+							asset: `{$asset_amount ? $asset : ''}`,
+						}
+					},
+					{
+						app: 'state',
+						state: `{
+							if ($base_amount) {
 								var[trigger.data.repo || '*pool*base'] += $base_amount;
 
 								var[trigger.data.repo || '*total_received*base'] += $base_amount;
@@ -167,17 +231,7 @@
 								response['donated_in_base'] = $base_amount;
 							}
 
-							$asset = trigger.output[[asset!=base]].asset;
-							if ($asset == 'ambiguous') {
-								bounce('Ambiguous asset');
-							}
-							
-							if (trigger.output[[asset=base]] <= 10000 AND $asset == 'none') {
-								bounce('You paid only the commission');
-							}
-
-							if ($asset != 'none') {
-								$asset_amount = trigger.output[[asset!=base]];
+							if ($asset_amount) {
 								var[trigger.data.repo || '*pool*' || $asset] += $asset_amount;
 
 								var[trigger.data.repo || '*total_received*' || $asset] += $asset_amount;

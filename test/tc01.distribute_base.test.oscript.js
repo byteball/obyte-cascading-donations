@@ -104,6 +104,7 @@ describe('Obyte Cascading Donations Bot Test Case 1 Distribute base without rule
 		expect(response.bounced).to.be.false
 		expect(response.response.responseVars.message).to.be.equal('Successful donation to alice/myproject')
 		expect(response.response.responseVars.donated_in_base).to.be.equal(1e9)
+		expect(response.response_unit).to.be.null
 
 		const { vars } = await this.network.wallet.bob.readAAStateVars(this.network.agent.cascadingDonations)
 		expect(vars['alice/myproject*pool*base']).to.be.equal(1e9)

@@ -10,6 +10,7 @@
 
 const path = require('path')
 const AA_PATH = '../agent.aa'
+const NOTIFICATION_AA_PATH = './notification.aa'
 const { ATTESTOR_MNEMONIC, DEFAULT_EXPENDABLE, BOUNCE_FEE } = require('./constants')
 
 describe('Obyte Cascading Donations Bot Test Case 8 Nested donations 1 level(custom asset)', function () {
@@ -19,6 +20,7 @@ describe('Obyte Cascading Donations Bot Test Case 8 Nested donations 1 level(cus
 		this.network = await Network.create()
 			.with.asset({ myasset: {} })
 			.with.agent({ cascadingDonations: path.join(__dirname, AA_PATH) })
+			.with.agent({ notification: path.join(__dirname, NOTIFICATION_AA_PATH) })
 			.with.agent({ attestation_aa: path.join(__dirname, '../node_modules/github-attestation/github.aa') })
 			.with.wallet({ attestor: 100e9 }, ATTESTOR_MNEMONIC)
 			.with.wallet({ alice: DEFAULT_EXPENDABLE })
@@ -144,6 +146,25 @@ describe('Obyte Cascading Donations Bot Test Case 8 Nested donations 1 level(cus
 		expect(response.response.responseVars.message).to.be.equal('Rules for alice/aliceproject are set')
 	}).timeout(60000)
 
+	it('8.1.2 Set notification AA for aliceproject', async () => {
+		const { unit, error } = await this.network.wallet.alice.triggerAaWithData({
+			toAddress: this.network.agent.cascadingDonations,
+			amount: BOUNCE_FEE,
+			data: {
+				notification_aa: this.network.agent.notification,
+				repo: 'alice/aliceproject',
+			}
+		})
+
+		expect(unit).to.be.validUnit
+		expect(error).to.be.null
+		await this.network.witnessUntilStable(unit)
+
+		const { response } = await this.network.getAaResponseToUnit(unit)
+		expect(response.bounced).to.be.false
+		expect(response.response.responseVars.message).to.be.equal('Set notification AA for alice/aliceproject')
+	}).timeout(60000)
+
 	it('8.2.1 Set up rules for bobproject', async () => {
 		const { unit, error } = await this.network.wallet.bob.triggerAaWithData({
 			toAddress: this.network.agent.cascadingDonations,
@@ -199,8 +220,23 @@ describe('Obyte Cascading Donations Bot Test Case 8 Nested donations 1 level(cus
 		expect(response.bounced).to.be.false
 		expect(response.response.responseVars.message).to.be.equal('Successful donation to alice/aliceproject')
 		expect(response.response.responseVars[`donated_in_${this.network.asset.myasset}`]).to.be.equal(100e9)
+		expect(response.response_unit).to.be.validUnit
 
 		const charlieAddress = await this.network.wallet.charlie.getAddress()
+
+		const { unitObj } = await this.network.wallet.charlie.getUnitInfo({ unit: response.response_unit })
+		expect(Utils.getExternalPayments(unitObj)).to.deep.equalInAnyOrder([
+			{
+				address: this.network.agent.notification,
+				amount: 100,
+			},
+		])
+		expect(unitObj.messages.find(m => m.app === 'data').payload).to.deep.eq({
+			repo: 'alice/aliceproject',
+			donor: charlieAddress,
+			asset: this.network.asset.myasset,
+			asset_amount: 100e9,
+		})
 
 		const { vars } = await this.network.wallet.charlie.readAAStateVars(this.network.agent.cascadingDonations)
 		expect(vars[`alice/aliceproject*pool*${this.network.asset.myasset}`]).to.be.equal(100e9)
