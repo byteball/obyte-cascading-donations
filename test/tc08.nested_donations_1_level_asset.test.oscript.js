@@ -235,7 +235,7 @@ describe('Obyte Cascading Donations Bot Test Case 8 Nested donations 1 level(cus
 			repo: 'alice/aliceproject',
 			donor: charlieAddress,
 			asset: this.network.asset.myasset,
-			asset_amount: 100e9,
+			amount: 100e9,
 		})
 
 		const { vars } = await this.network.wallet.charlie.readAAStateVars(this.network.agent.cascadingDonations)

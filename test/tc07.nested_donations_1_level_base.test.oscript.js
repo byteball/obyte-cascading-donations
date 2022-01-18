@@ -228,7 +228,8 @@ describe('Obyte Cascading Donations Bot Test Case 7 Nested donations 1 level(bas
 		expect(unitObj.messages.find(m => m.app === 'data').payload).to.deep.eq({
 			repo: 'alice/aliceproject',
 			donor: charlieAddress,
-			base_amount: 100e9,
+			amount: 100e9,
+			asset: 'base',
 		})
 
 		const { vars } = await this.network.wallet.bob.readAAStateVars(this.network.agent.cascadingDonations)

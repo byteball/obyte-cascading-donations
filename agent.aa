@@ -6,6 +6,8 @@
 // var[${repo}*total_received_from_other_repos*${asset}] - total received by repo from other repos in asset
 // var[${repo1_or_user_address}*to*${repo2}*${asset}] - total received or forwarded from repo1_or_user_address to repo2 in asset
 // var[${repo2}*from*${repo1_or_user_address}*${asset}] - total received or forwarded from repo1_or_user_address to repo2 in asset
+// var[${repo_or_user_address}*total_donated*${asset}] - total donated by user or repo in asset
+// var[total_donated*${asset}] - grand total donated in asset
 // var[paid_to*${address}*${asset}] - total paid to repo owner
 // var[${repo}*unclaimed*${asset}] - unclaimed funds of attested owner
 // var[nickname*${address}] - donor ranking nickname
@@ -78,6 +80,12 @@
 		$get_total_donated = ($donor_address_or_repo, $recipient_repo, $asset) => 
 			var[$donor_address_or_repo || '*to*' || $recipient_repo || '*' || $asset];
 
+		$get_total_donated_to_all = ($donor_address_or_repo, $asset) => 
+			var[$donor_address_or_repo || '*total_donated*' || $asset];
+
+		$get_grand_total = ($donor_address_or_repo, $asset) => 
+			var['total_donated*' || $asset];
+
 		// voting weight of the donor: sum of their donations with all amounts converted to a single asset using $exchange_rates
 		$get_donor_weight = ($donor_address_or_repo, $recipient_repo, $exchange_rates) => 
 			reduce(
@@ -98,6 +106,33 @@
 				0
 			);
 
+		// all donations by a donor with all amounts converted to a single asset using $exchange_rates
+		$get_total_donated_to_all_in_all_assets = ($donor_address_or_repo, $exchange_rates) => 
+			reduce(
+				$exchange_rates,
+				20,
+				($acc, $asset, $exchange_rate) => 
+					$acc + var[$donor_address_or_repo || '*total_donated*' || $asset] * $exchange_rate,
+				0
+			);
+
+		// all donations on kivach with all amounts converted to a single asset using $exchange_rates
+		$get_grand_total_in_all_assets = ($exchange_rates) => 
+			reduce(
+				$exchange_rates,
+				20,
+				($acc, $asset, $exchange_rate) => 
+					$acc + var['total_donated*' || $asset] * $exchange_rate,
+				0
+			);
+
+	}`,
+	init: `{
+		if (trigger.data.repo){
+			$sp = $parse_repo_str(trigger.data.repo);
+			$owner = $sp[0];
+			$project = $sp[1];			
+		}
 	}`,
 	messages: {
 		cases: [
@@ -112,10 +147,6 @@
 							if (trigger.output[[asset=base]] < 4224) {
 								bounce('Not enough fee to pay rules storage');
 							}
-
-							$sp = $parse_repo_str(trigger.data.repo);
-							$owner = $sp[0];
-							$project = $sp[1];
 
 							if (!$has_attestation(trigger.address, $owner)) {
 								bounce('Address ' || trigger.address || ' has no attestation for ' || $owner);
@@ -142,10 +173,6 @@
 					{
 						app: 'state',
 						state: `{
-							$sp = $parse_repo_str(trigger.data.repo);
-							$owner = $sp[0];
-							$project = $sp[1];
-
 							if (!$has_attestation(trigger.address, $owner)) {
 								bounce('Address ' || trigger.address || ' has no attestation for ' || $owner);
 							}
@@ -163,8 +190,6 @@
 			{
 				if: `{trigger.data.donate AND trigger.data.repo}`,
 				init: `{
-					$parse_repo_str(trigger.data.repo);
-
 					$notification_aa = var[trigger.data.repo || '*notification_aa'];
 					$min_fee = /*$notification_aa ? 3000 :*/ 1000;
 
@@ -184,17 +209,25 @@
 						$base_amount = trigger.output[[asset=base]] - $min_fee; // 1000 bytes storage fee
 					}
 
-					$asset = trigger.output[[asset!=base]].asset;
-					if ($asset == 'ambiguous') {
+					$non_base_asset = trigger.output[[asset!=base]].asset;
+					if ($non_base_asset == 'ambiguous') {
 						bounce('Ambiguous asset');
 					}
 					
-					if (trigger.output[[asset=base]] <= 10000 AND $asset == 'none') {
+					if (trigger.output[[asset=base]] <= 10000 AND $non_base_asset == 'none') {
 						bounce('You paid only the commission');
 					}
 
-					if ($asset != 'none') {
+					if ($non_base_asset != 'none') {
 						$asset_amount = trigger.output[[asset!=base]];
+						require(!$base_amount, "donated both in base and another asset");
+						$asset = $non_base_asset;
+						$amount = $asset_amount;
+					}
+					else{
+						require($base_amount, "no base amount");
+						$asset = 'base';
+						$amount = $base_amount;
 					}
 				}`,
 				messages: [
@@ -212,35 +245,24 @@
 						payload: {
 							repo: `{trigger.data.repo}`,
 							donor: `{$donor}`,
-							base_amount: `{$base_amount OTHERWISE ''}`,
-							asset_amount: `{$asset_amount OTHERWISE ''}`,
-							asset: `{$asset_amount ? $asset : ''}`,
+							amount: `{$amount}`,
+							asset: `{$asset}`,
 						}
 					},
 					{
 						app: 'state',
 						state: `{
-							if ($base_amount) {
-								var[trigger.data.repo || '*pool*base'] += $base_amount;
+							var[trigger.data.repo || '*pool*' || $asset] += $amount;
 
-								var[trigger.data.repo || '*total_received*base'] += $base_amount;
+							var[trigger.data.repo || '*total_received*' || $asset] += $amount;
 
-								var[$donor || '*to*' || trigger.data.repo || '*base'] += $base_amount;
-								var[trigger.data.repo || '*from*' || $donor || '*base'] += $base_amount;
-								
-								response['donated_in_base'] = $base_amount;
-							}
+							var[$donor || '*to*' || trigger.data.repo || '*' || $asset] += $amount;
+							var[trigger.data.repo || '*from*' || $donor || '*' || $asset] += $amount;
+							
+							var[$donor || '*total_donated*' || $asset] += $amount;
+							var['total_donated*' || $asset] += $amount;
 
-							if ($asset_amount) {
-								var[trigger.data.repo || '*pool*' || $asset] += $asset_amount;
-
-								var[trigger.data.repo || '*total_received*' || $asset] += $asset_amount;
-
-								var[$donor || '*to*' || trigger.data.repo || '*' || $asset] += $asset_amount;
-								var[trigger.data.repo || '*from*' || $donor || '*' || $asset] += $asset_amount;
-								
-								response['donated_in_' || $asset] = $asset_amount;
-							}
+							response['donated_in_' || $asset] = $amount;
 
 							response['message'] = 'Successful donation to '  || trigger.data.repo;
 						}`
@@ -252,9 +274,6 @@
 			{
 				if: `{trigger.data.distribute AND trigger.data.repo}`,
 				init: `{
-					$sp = $parse_repo_str(trigger.data.repo);
-					$owner = $sp[0];
-					$project = $sp[1];
 					$rules = var[trigger.data.repo || '*rules'];
 					$claimer = $has_attestation(trigger.address, $owner) ? trigger.data.to OTHERWISE trigger.address : false;
 
@@ -299,6 +318,7 @@
 								$to_share = floor($balance * $percent / 100);
 								var[$repo || '*pool*' || $asset] += $to_share;
 
+								var[trigger.data.repo || '*total_donated*' || $asset] += $to_share;
 								var[trigger.data.repo || '*to*' || $repo || '*' || $asset] += $to_share;
 								var[$repo || '*from*' || trigger.data.repo || '*' || $asset] += $to_share;
 
